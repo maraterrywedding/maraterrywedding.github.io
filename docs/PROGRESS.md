@@ -14,7 +14,7 @@ Detailed session notes live alongside this file as `SESSION-<date>.md`.
 | 4 | RSVP wizard (client side) | ✅ Done | 234 unit + 48 e2e tests green; invitation-code gate, works offline against the mock backend |
 | 5 | Apps Script backend + Sheet | ✅ **Deployed & smoke-tested** | Live on a wedding-only Google account, 14 Aug 2026 |
 | 6 | Translation fill-in + a11y polish | ✅ Done | Zero axe violations across 10 pages × 2 viewports; `pending-translation.json` empty |
-| 7 | GitHub repo, Actions, Pages launch | ⬜ Not started | Repo name decides the base path |
+| 7 | GitHub repo, Actions, Pages launch | 🔸 Ready to push | Committed locally, workflows written. Needs the repo created + three clicks — see below. |
 
 ## Decisions locked
 
@@ -40,6 +40,47 @@ Detailed session notes live alongside this file as `SESSION-<date>.md`.
 Both RSVP dates are estimates and will move once vendors send formal proposals.
 They live in one place (`src/data/event.ts`, later a `Config` tab in the Sheet)
 precisely so moving them is a one-line change.
+
+## Going live
+
+Everything is committed on `main`. What remains is on GitHub:
+
+1. **Create the repo.** Signed in as `maraterrywedding`, make a new repo named
+   exactly `maraterrywedding.github.io`. It **must be public** — GitHub Pages on
+   the free plan will not serve a private repo. Do not add a README or
+   .gitignore; the repo already has both.
+
+2. **Push:**
+
+   ```bash
+   git remote add origin https://github.com/maraterrywedding/maraterrywedding.github.io.git
+   git push -u origin main
+   ```
+
+3. **Add the backend URL.** Settings → Secrets and variables → Actions →
+   **Variables** tab → New repository variable:
+   `PUBLIC_RSVP_ENDPOINT` = the `/exec` URL (it is in your local `.env`).
+   The deploy fails with a clear message if this is missing, rather than
+   shipping a site whose form silently does nothing.
+
+4. **Turn on Pages.** Settings → Pages → Source: **GitHub Actions**.
+
+5. Re-run the deploy workflow if it ran before steps 3–4 were done.
+
+The site then builds on every push to `main`, and the test suite runs on every
+pull request.
+
+### After it is live
+
+Submit a real RSVP through the deployed site with your own address, click the
+link in the confirmation email, change something, and check the sheet updates.
+Then delete that row.
+
+**What is public:** the repo is public, so the site source, the photos in
+`src/assets/photos/` and the contact email in `src/data/event.ts` are all
+visible. No guest data is — that lives only in the spreadsheet. The original
+photos in `resources/fotos/` are **deliberately not committed**: they still
+carry GPS EXIF, which the processed copies do not.
 
 ## Still needed from the couple
 
