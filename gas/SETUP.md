@@ -157,13 +157,21 @@ Go back to the sheet. There is now a **Config** tab. Set these:
 | `eventAt` | `2027-06-11T11:00:00+02:00` |
 | `hotelNights` | `2027-06-10,2027-06-11,2027-06-12` |
 | `inviteCode` | `GROHNDE27` |
-| `siteOrigin` | your live site URL, e.g. `https://ruasterry.github.io` |
+| `siteOrigin` | **`https://maraterrywedding.github.io`** — see the warning below |
 | `replyTo` | `ruasterry@gmail.com` |
 | `coupleNames` | `Mara & Terry` |
 
 **These are read on every single request.** Moving a deadline, changing the
 invitation code or fixing the site URL is a one-cell edit — no redeploy, no
 rebuild, and no new `/exec` URL.
+
+> ⚠️ **`siteOrigin` is the one that bites.** It defaults to
+> `http://localhost:4321`, and every confirmation email builds its edit link
+> from it. Leave it at the default and guests receive a link to *your laptop* —
+> the reply is stored perfectly, the email arrives looking correct, and nothing
+> appears wrong until somebody tries to change their answer and cannot.
+>
+> `scripts/smoke-rsvp.mjs` now fails if this is still pointing at localhost.
 
 Note the `+01:00` and `+02:00`: Germany is on winter time in November and
 December, summer time in June. Getting these wrong shifts a deadline by an hour,

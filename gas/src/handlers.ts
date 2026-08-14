@@ -138,6 +138,11 @@ export function handleStatus(deps: Deps): ApiResponse {
     softDeadline: config.softDeadline,
     hardLock: config.hardLock,
     eventAt: config.eventAt,
+    // Exposed so the smoke test can catch the one misconfiguration that is
+    // invisible until a guest complains: siteOrigin left at its localhost
+    // default, which sends every confirmation email to a link that only works
+    // on the developer's own machine.
+    siteOrigin: config.siteOrigin,
   };
 }
 

@@ -141,6 +141,14 @@ const status = await get({ action: 'status' });
 check('responds with ok', status.ok === true, JSON.stringify(status));
 check('reports a phase', ['open', 'late', 'locked'].includes(status.phase), `phase=${status.phase}`);
 check('knows the event date', typeof status.eventAt === 'string');
+// The failure this catches: siteOrigin left at its default sends every
+// confirmation email to a localhost link, which works for nobody. The reply is
+// stored correctly, so nothing looks wrong until a guest cannot get back in.
+check(
+  'points confirmation emails at the live site, not localhost',
+  typeof status.siteOrigin === 'string' && !/localhost|127\.0\.0\.1/.test(status.siteOrigin),
+  `siteOrigin is "${status.siteOrigin}" — fix it in the Config tab of the spreadsheet`,
+);
 
 if (status.phase === 'locked') {
   // Not a failure — there is simply nothing to write to.
