@@ -92,7 +92,7 @@ export const EVENT = {
 
   /** Where guests reach a human when a form can't help them. */
   contact: {
-    email: 'ruasterry@gmail.com',
+    email: 'maraterry@gmail.com',
     whatsapp: '',
   },
 } as const;
