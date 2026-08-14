@@ -55,8 +55,8 @@ None of it blocking.
 
 - Ceremony time: 11:00 or 13:00 (`ceremonyTimeConfirmed` in `event.ts` drives the
   "to be confirmed" pill)
-- Gift policy — the most-asked question, currently an honest "still deciding"
-- Dress code choice — set `CHOSEN_CODE` and the page highlights it
+- The rest of the running order. The times are still a draft and the page says so
+- Whether the ceremony is outdoors — answered as weather-dependent for now
 - Party Photos album link
 - WhatsApp number
 - Verify the five alternative hotels: distances are estimates and four have no

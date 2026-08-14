@@ -129,11 +129,11 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    time: '17:00',
+    time: '16:45',
     title: {
-      en: 'Quiet hour',
-      de: 'Ruhestunde',
-      pt: 'Hora do sossego',
+      en: 'Quiet time',
+      de: 'Ruhezeit',
+      pt: 'Momento de sossego',
     },
     note: {
       en: 'A breather: little ones can nap, everyone can change and catch their breath.',
@@ -142,8 +142,6 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    // TODO: this now collides with the 17:00 quiet hour. Two things cannot both
-    // start at 17:00 — one of the two needs to move before this is final.
     time: '17:00',
     highlight: true,
     title: {

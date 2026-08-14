@@ -118,10 +118,12 @@ which the processed copies do not. Keep that folder backed up elsewhere.
 None of these block development.
 
 - [ ] Ceremony time: 11:00 or 13:00
-- [ ] Gift / wishlist policy — the single most-asked Q&A question. Currently on the
-      Q&A page as an honest "we're still thinking about it"
-- [ ] Dress code choice. Set `CHOSEN_CODE` in `src/data/dresscode.ts` and the page
-      highlights it automatically
+- [x] Gift policy — answered 14 Aug 2026: no gifts expected, but welcome
+- [x] Dress code — decided 14 Aug 2026: any of the four, no sweatpants or hoodies,
+      and nobody but the bride in white. `CHOSEN_CODE` stays `null` on purpose;
+      setting it would narrow the page to a single code
+- [ ] Whether the ceremony is actually outdoors — currently answered as "hoping
+      to, weather depending, decided close to the day"
 - [x] Memories album link — set 14 Aug 2026, QR code generating
 - [ ] Party Photos album link (`EVENT.albums.party`) — page shows a waiting state
       until it exists
