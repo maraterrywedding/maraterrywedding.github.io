@@ -8,6 +8,10 @@ scratch/
 # Editor cruft
 .obsidian/
 
+# Personal project dashboard, kept out of the public repo on purpose.
+# NOT BACKED UP BY GIT — copy it somewhere else if it matters.
+DASHBOARD.md
+
 # ORIGINAL PHOTOS — deliberately not committed.
 #
 # GitHub Pages on the free plan needs a public repo, and these files still carry
