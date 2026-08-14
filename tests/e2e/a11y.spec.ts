@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { settle, stubWeather } from './helpers';
 
 /**
  * Automated accessibility checks.
@@ -44,9 +45,17 @@ function describe(results: Awaited<ReturnType<typeof scan>>): string {
 }
 
 test.describe('accessibility', () => {
+  test.beforeEach(({ page }) => stubWeather(page));
+
   for (const path of PAGES) {
     test(`${path} has no automatically detectable violations`, async ({ page }) => {
-      await page.goto(path, { waitUntil: 'networkidle' });
+      // `load`, not `networkidle`. The scan needs a rendered DOM, not a quiet
+      // network — and waiting for silence on a page that talks to a third-party
+      // API means a slow upstream fails the build for no good reason.
+      await page.goto(path, { waitUntil: 'load' });
+      // The forecast cards are built after the fetch resolves; scanning before
+      // they exist would skip them.
+      await settle(page);
       const results = await scan(page);
       expect(results.violations, `\n${describe(results)}\n`).toEqual([]);
     });

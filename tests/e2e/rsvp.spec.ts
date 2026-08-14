@@ -1,4 +1,8 @@
 ﻿import { expect, test, type Page } from '@playwright/test';
+import { settle, stubWeather } from './helpers';
+
+// Keeps the home page deterministic and independent of Open-Meteo.
+test.beforeEach(({ page }) => stubWeather(page));
 
 /**
  * The flows that would actually cost the couple something if they broke:
@@ -385,7 +389,8 @@ test.describe('page health', () => {
       page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
       page.on('pageerror', (e) => errors.push(String(e)));
 
-      await page.goto(path, { waitUntil: 'networkidle' });
+      await page.goto(path, { waitUntil: 'load' });
+      await settle(page);
 
       const scrolls = await page.evaluate(() => {
         window.scrollTo({ left: 9999, behavior: 'instant' });
