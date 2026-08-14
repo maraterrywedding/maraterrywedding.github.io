@@ -14,7 +14,7 @@ Detailed session notes live alongside this file as `SESSION-<date>.md`.
 | 4 | RSVP wizard (client side) | ✅ Done | 234 unit + 48 e2e tests green; invitation-code gate, works offline against the mock backend |
 | 5 | Apps Script backend + Sheet | ✅ **Deployed & smoke-tested** | Live on a wedding-only Google account, 14 Aug 2026 |
 | 6 | Translation fill-in + a11y polish | ✅ Done | Zero axe violations across 10 pages × 2 viewports; `pending-translation.json` empty |
-| 7 | GitHub repo, Actions, Pages launch | 🔸 Ready to push | Committed locally, workflows written. Needs the repo created + three clicks — see below. |
+| 7 | GitHub repo, Actions, Pages launch | ✅ **Live** | https://maraterrywedding.github.io — builds on every push to `main` |
 
 ## Decisions locked
 
@@ -41,9 +41,38 @@ Both RSVP dates are estimates and will move once vendors send formal proposals.
 They live in one place (`src/data/event.ts`, later a `Config` tab in the Sheet)
 precisely so moving them is a one-line change.
 
-## Going live
+## Live
 
-Everything is committed on `main`. What remains is on GitHub:
+**https://maraterrywedding.github.io** — deployed by GitHub Actions on every
+push to `main`. The test suite runs on every pull request.
+
+### Two settings that are NOT in git
+
+They live in the spreadsheet's **Config** tab, are read on every request, and
+take effect immediately:
+
+| Cell | Should be |
+|---|---|
+| `siteOrigin` | `https://maraterrywedding.github.io` — if left at its localhost default, every confirmation email sends guests to a dead link |
+| `replyTo` | `maraterrywedding@gmail.com` |
+
+`node scripts/smoke-rsvp.mjs <exec-url>` fails if `siteOrigin` is still
+localhost, so run it after any change there.
+
+### Still to decide: repo visibility
+
+The repo is public, which free GitHub Pages requires. The site itself carries
+`noindex` and a `robots.txt`, but the repo is a separate public page that search
+engines do index, and the venue address appears in about 93 places across the
+source. Neither of those is access control — anyone with the link sees the site
+regardless.
+
+If that matters, two options: **GitHub Pro** (~$4/month, allows Pages from a
+private repo, keeps this URL), or **Cloudflare Pages / Netlify** (free from a
+private repo, but a different URL).
+
+<details>
+<summary>Original launch steps, kept for reference</summary>
 
 1. **Create the repo.** Signed in as `maraterrywedding`, make a new repo named
    exactly `maraterrywedding.github.io`. It **must be public** — GitHub Pages on
@@ -76,11 +105,13 @@ Submit a real RSVP through the deployed site with your own address, click the
 link in the confirmation email, change something, and check the sheet updates.
 Then delete that row.
 
-**What is public:** the repo is public, so the site source, the photos in
-`src/assets/photos/` and the contact email in `src/data/event.ts` are all
-visible. No guest data is — that lives only in the spreadsheet. The original
-photos in `resources/fotos/` are **deliberately not committed**: they still
-carry GPS EXIF, which the processed copies do not.
+</details>
+
+**What is public:** the site source, the photos in `src/assets/photos/`, and the
+contact address. **No guest data is** — that lives only in the spreadsheet, and
+nothing submitted is ever rendered into the site. The original photos in
+`resources/fotos/` are deliberately not committed: they still carry GPS EXIF,
+which the processed copies do not. Keep that folder backed up elsewhere.
 
 ## Still needed from the couple
 
