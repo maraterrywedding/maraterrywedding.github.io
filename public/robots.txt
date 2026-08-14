@@ -1,0 +1,10 @@
+# This is a private invitation, not a public page. Please stay out.
+#
+# Every page also carries <meta name="robots" content="noindex, nofollow">,
+# which is the instruction that actually removes a page from results — this file
+# only asks crawlers not to fetch in the first place. Both are honoured by
+# well-behaved crawlers and ignored by everything else, so neither is access
+# control: anyone holding the link still sees the whole site.
+
+User-agent: *
+Disallow: /
