@@ -27,7 +27,7 @@ Detailed session notes live alongside this file as `SESSION-<date>.md`.
 | RSVP soft deadline | 5 November 2026 — early headcount, form stays open |
 | RSVP hard lock | 15 December 2026 — form goes read-only |
 | Backend | Google Apps Script + Google Sheet |
-| Contact | ruasterry@gmail.com |
+| Contact | maraterrywedding@gmail.com — the wedding-only account that also owns the RSVP spreadsheet |
 | Entry code | **None.** Nothing is printed on the invitations, so the form opens directly. Setting `EVENT.rsvp.inviteCode` turns the gate back on if that ever changes. |
 | Party code | `MT-XXXXXX`, generated per party when they reply. Shown on the success screen and in the confirmation email. Gets a guest back into their answer (**with** the email address it was issued to), and is the couple's reference for seating and check-in. |
 | Site URL | `https://maraterrywedding.github.io` — repo `maraterrywedding.github.io` under the account of the same name, so `base` stays `/` |
@@ -94,7 +94,8 @@ None of these block development.
 - [x] Memories album link — set 14 Aug 2026, QR code generating
 - [ ] Party Photos album link (`EVENT.albums.party`) — page shows a waiting state
       until it exists
-- [x] Contact email — set to ruasterry@gmail.com on 14 Aug 2026
+- [x] Contact email — maraterrywedding@gmail.com, set 14 Aug 2026. Also needs to
+      be the `replyTo` cell in the spreadsheet's Config tab.
 - [ ] WhatsApp number for `EVENT.contact.whatsapp` (still empty)
 - [ ] Confirm the invitation code before the invitations go to print. Changing it
       later means reprinting, and anyone holding an old card gets let through

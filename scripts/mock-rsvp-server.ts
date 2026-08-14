@@ -41,7 +41,7 @@ const CONFIG: BackendConfig = {
   hotelNights: ['2027-06-10', '2027-06-11', '2027-06-12'],
   inviteCode: 'GROHNDE27',
   siteOrigin: process.env.MOCK_SITE_ORIGIN ?? 'http://localhost:4321',
-  replyTo: 'ruasterry@gmail.com',
+  replyTo: 'maraterrywedding@gmail.com',
   coupleNames: 'Mara & Terry',
 };
 

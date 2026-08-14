@@ -12,7 +12,7 @@ One Google Sheet and one Apps Script. About twenty minutes, once.
 Nothing starting with `npm` ever goes into the Apps Script editor. Each step
 below is marked with which one it belongs to.
 
-Everything runs under one Google account — **ruasterry@gmail.com**, or a
+Everything runs under one Google account — **maraterrywedding@gmail.com**, or a
 separate wedding-only account if you take that route (see the Advanced
 Protection note in step 3). Be signed in as that account before you start, and
 check the avatar in the top right at every step: with several accounts signed
@@ -74,7 +74,7 @@ of it (Ctrl+A, Ctrl+C).
    normal** — the app is "unverified" because it is yours and has not been
    through Google's review, which is not a thing a private script needs.
    - Click **Review permissions**
-   - Choose the ruasterry@gmail.com account
+   - Choose the maraterrywedding@gmail.com account
    - Click **Advanced**, then **Go to Wedding RSVP (unsafe)**
    - Click **Allow**
 3. It will say "No responses yet." That is the correct answer, and it means the
@@ -124,7 +124,7 @@ sheet and what goes in `replyTo`.
 2. Click the gear next to "Select type" and choose **Web app**.
 3. Set:
    - **Description**: `v1`
-   - **Execute as**: **Me (ruasterry@gmail.com)**
+   - **Execute as**: **Me (maraterrywedding@gmail.com)**
    - **Who has access**: **Anyone**
 
    > It must be **Anyone**, not "Anyone with a Google account". Guests must not
@@ -158,7 +158,7 @@ Go back to the sheet. There is now a **Config** tab. Set these:
 | `hotelNights` | `2027-06-10,2027-06-11,2027-06-12` |
 | `inviteCode` | `GROHNDE27` |
 | `siteOrigin` | **`https://maraterrywedding.github.io`** — see the warning below |
-| `replyTo` | `ruasterry@gmail.com` |
+| `replyTo` | `maraterrywedding@gmail.com` |
 | `coupleNames` | `Mara & Terry` |
 
 **These are read on every single request.** Moving a deadline, changing the
