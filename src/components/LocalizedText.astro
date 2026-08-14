@@ -1,0 +1,27 @@
+---
+import { LOCALE_TAGS, DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
+import { pickLocalized, t, type Localized } from '@/i18n/utils';
+
+interface Props {
+  value: Localized<string>;
+  lang: Locale;
+  /** Element to render. Use `span` inside a sentence, `p` for a paragraph. */
+  as?: 'p' | 'span' | 'div' | 'h2' | 'h3';
+  /** Show the small "not translated yet" note under a fallback. */
+  note?: boolean;
+  class?: string;
+}
+
+const { value, lang, as: Tag = 'p', note = true, class: className } = Astro.props;
+
+const { value: text, isFallback } = pickLocalized(value, lang);
+
+// When German or Portuguese text is missing we render the English, and mark it
+// as English so a screen reader switches pronunciation instead of reading it
+// with a German voice. The visible note tells sighted readers the same thing.
+const langAttr = isFallback ? LOCALE_TAGS[DEFAULT_LOCALE] : undefined;
+---
+
+<Tag class={className} lang={langAttr}>{text}</Tag>{
+  isFallback && note && <small class="untranslated-note">{t(lang, 'common.notTranslated')}</small>
+}

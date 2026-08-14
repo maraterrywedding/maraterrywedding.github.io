@@ -1,0 +1,107 @@
+---
+import type { Condition } from '@/lib/weather';
+
+interface Props {
+  condition: Condition;
+  class?: string;
+}
+
+const { condition, class: className } = Astro.props;
+
+/** Shared cloud body, so every cloudy variant sits at the same place. */
+const CLOUD = 'M7.5 16.5h9a3 3 0 0 0 .2-6 4.6 4.6 0 0 0-8.8-1 3.1 3.1 0 0 0-.4 7z';
+---
+
+<svg
+  class:list={['wicon', className]}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {
+    condition === 'clear' && (
+      <>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4" />
+      </>
+    )
+  }
+
+  {
+    condition === 'partlyCloudy' && (
+      <>
+        <circle cx="8.5" cy="8" r="3" />
+        <path d="M8.5 2.5v1.5M3 8h1.5M4.6 4.1l1 1M12.4 4.1l-1 1" />
+        <path d={CLOUD} />
+      </>
+    )
+  }
+
+  {condition === 'overcast' && <path d={CLOUD} />}
+
+  {
+    condition === 'fog' && (
+      <>
+        <path d={CLOUD} />
+        <path d="M5 20h6M14 20h5" />
+      </>
+    )
+  }
+
+  {
+    condition === 'drizzle' && (
+      <>
+        <path d={CLOUD} />
+        <path d="M9.5 19.5v.5M12 19.5v.5M14.5 19.5v.5" />
+      </>
+    )
+  }
+
+  {
+    condition === 'rain' && (
+      <>
+        <path d={CLOUD} />
+        <path d="M9.5 19l-.8 2M12 19l-.8 2M14.5 19l-.8 2" />
+      </>
+    )
+  }
+
+  {
+    condition === 'showers' && (
+      <>
+        <path d={CLOUD} />
+        <path d="M9 19l-1.4 3M12.5 19l-1.4 3M16 19l-1.4 3" />
+      </>
+    )
+  }
+
+  {
+    condition === 'snow' && (
+      <>
+        <path d={CLOUD} />
+        <path d="M9 20.5h1.4M9.7 19.8v1.4M13.6 20.5H15M14.3 19.8v1.4" />
+      </>
+    )
+  }
+
+  {
+    condition === 'thunderstorm' && (
+      <>
+        <path d={CLOUD} />
+        <path d="M13 18.5l-3 2.5h2.4l-.9 2.5 3.3-3h-2.2z" fill="currentColor" stroke-width="0.8" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .wicon {
+    width: 100%;
+    height: 100%;
+  }
+</style>

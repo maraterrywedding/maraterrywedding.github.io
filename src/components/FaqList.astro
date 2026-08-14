@@ -1,0 +1,101 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '@/i18n/locales';
+import { pickLocalized, t } from '@/i18n/utils';
+import LocalizedText from './LocalizedText.astro';
+
+interface Props {
+  lang: Locale;
+  entries: CollectionEntry<'faq'>[];
+}
+
+const { lang, entries } = Astro.props;
+---
+
+{/* <details> gives a real accordion with no JavaScript: keyboard-operable,
+    announced correctly, and findable by the browser's own in-page search. */}
+<div class="faq">
+  {
+    entries.map((entry) => {
+      const { value: question } = pickLocalized(entry.data.question, lang);
+      return (
+        <details class="faq__item" id={entry.id}>
+          <summary class="faq__question">
+            <span>{question}</span>
+            <svg class="faq__chevron" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+              <path
+                d="M5 8l5 5 5-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </summary>
+
+          <div class="faq__answer">
+            <LocalizedText value={entry.data.answer} lang={lang} as="p" />
+            {entry.data.status === 'provisional' && (
+              <p class="pill pill--quiet faq__pill">{t(lang, 'common.provisional')}</p>
+            )}
+          </div>
+        </details>
+      );
+    })
+  }
+</div>
+
+<style>
+  .faq {
+    border-block-start: 1px solid var(--c-border);
+  }
+
+  .faq__item {
+    border-block-end: 1px solid var(--c-border);
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    min-height: var(--tap);
+    padding-block: var(--sp-4);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--c-heading);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question:hover {
+    color: var(--c-lilac-700);
+  }
+
+  .faq__chevron {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    color: var(--c-lilac-600);
+    transition: transform 160ms ease;
+  }
+
+  .faq__item[open] .faq__chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq__answer {
+    padding-block-end: var(--sp-5);
+    max-width: var(--measure);
+    color: var(--c-text-muted);
+  }
+
+  .faq__pill {
+    margin-block-start: var(--sp-3);
+  }
+</style>

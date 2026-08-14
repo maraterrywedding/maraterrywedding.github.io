@@ -1,0 +1,84 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import RsvpForm from '@/components/rsvp/RsvpForm.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+import { EVENT } from '@/data/event';
+import { formatDate } from '@/lib/format';
+import { rsvpPhase } from '@/lib/rsvp/validate';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+/**
+ * Evaluated at build time. This only decides what the page *looks* like — the
+ * backend re-reads the deadline on every write, so someone holding the raw
+ * endpoint URL still cannot submit after the lock.
+ */
+const phase = rsvpPhase(new Date(), EVENT.rsvp.softDeadline, EVENT.rsvp.hardLock);
+const softDeadline = formatDate(EVENT.rsvp.softDeadline, lang);
+---
+
+<Base lang={lang} path="/rsvp" title={t(lang, 'rsvp.title')}>
+  <PageHeader
+    lang={lang}
+    title={t(lang, 'rsvp.title')}
+    intro={phase === 'locked' ? undefined : t(lang, 'rsvp.intro', { deadline: softDeadline })}
+  />
+
+  <section class="section">
+    <div class="container">
+      {
+        phase === 'locked' ? (
+          <div class="card locked">
+            <h2>{t(lang, 'rsvp.locked.heading')}</h2>
+            <p class="muted">{t(lang, 'rsvp.locked.body')}</p>
+            {EVENT.contact.email && (
+              <p>
+                <a class="button button--secondary" href={`mailto:${EVENT.contact.email}`}>
+                  {t(lang, 'footer.contact')}
+                </a>
+              </p>
+            )}
+          </div>
+        ) : (
+          <>
+            {phase === 'late' && <p class="notice-box rsvp-late">{t(lang, 'rsvp.late.notice')}</p>}
+            <RsvpForm lang={lang} />
+            <p class="rsvp-already">
+              <a href={localizedPath(lang, '/rsvp/edit')}>{t(lang, 'rsvp.alreadySent')}</a>
+            </p>
+          </>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .locked {
+    max-width: var(--measure);
+  }
+
+  .locked > * + * {
+    margin-block-start: var(--sp-4);
+  }
+
+  .rsvp-late {
+    max-width: 42rem;
+    margin: 0 auto var(--sp-5);
+  }
+
+  .rsvp-already {
+    max-width: 42rem;
+    margin: var(--sp-6) auto 0;
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--c-border);
+    text-align: center;
+    font-size: var(--step--1);
+  }
+</style>

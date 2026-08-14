@@ -1,0 +1,39 @@
+---
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  intro?: string;
+  /** Renders the "may still change" pill under the title. */
+  provisional?: boolean;
+}
+
+const { lang, title, intro, provisional = false } = Astro.props;
+---
+
+<header class="page-header">
+  <div class="container">
+    <h1>{title}</h1>
+    {intro && <p class="lead page-header__intro">{intro}</p>}
+    {provisional && <p class="pill page-header__pill">{t(lang, 'common.provisional')}</p>}
+  </div>
+</header>
+
+<style>
+  .page-header {
+    padding-block: var(--sp-7) var(--sp-5);
+    background: var(--c-bg-tint);
+    border-block-end: 1px solid var(--c-lilac-200);
+  }
+
+  .page-header__intro {
+    max-width: var(--measure);
+    margin-block-start: var(--sp-4);
+  }
+
+  .page-header__pill {
+    margin-block-start: var(--sp-4);
+  }
+</style>

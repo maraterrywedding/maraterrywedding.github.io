@@ -1,0 +1,118 @@
+---
+import QRCode from 'qrcode';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+
+interface Props {
+  lang: Locale;
+  /** Null until the couple create the album — the panel then shows a waiting state. */
+  url: string | null;
+  title: string;
+  body: string;
+  ctaLabel: string;
+  /** Shown under the "coming soon" state so guests know when to come back. */
+  waitingNote?: string;
+}
+
+const { lang, url, title, body, ctaLabel, waitingNote } = Astro.props;
+
+// Generated at build time, so the page carries no runtime dependency on a QR
+// service — it works offline, costs nothing, and cannot break later.
+const qrSvg = url
+  ? await QRCode.toString(url, {
+      type: 'svg',
+      margin: 1,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#24422f', light: '#ffffff' },
+    })
+  : null;
+---
+
+<section class="qr">
+  <div class="qr__text">
+    <h2>{title}</h2>
+    <p class="qr__body">{body}</p>
+
+    {
+      url ? (
+        <p>
+          <a class="button" href={url} target="_blank" rel="noopener noreferrer">
+            {ctaLabel}
+            <span class="visually-hidden">({t(lang, 'a11y.externalLink')})</span>
+          </a>
+        </p>
+      ) : (
+        <p class="pill pill--quiet">{t(lang, 'common.comingSoon')}</p>
+      )
+    }
+
+    {waitingNote && <p class="qr__note muted">{waitingNote}</p>}
+  </div>
+
+  {
+    qrSvg && (
+      <figure class="qr__code">
+        <div class="qr__svg" set:html={qrSvg} role="img" aria-label={ctaLabel} />
+        <figcaption>{t(lang, 'photos.scanHint')}</figcaption>
+      </figure>
+    )
+  }
+</section>
+
+<style>
+  .qr {
+    display: grid;
+    gap: var(--sp-6);
+    align-items: center;
+    padding: var(--sp-6);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+  }
+
+  @media (min-width: 44rem) {
+    .qr {
+      grid-template-columns: 1fr auto;
+    }
+  }
+
+  .qr__text > * + * {
+    margin-block-start: var(--sp-4);
+  }
+
+  .qr__body {
+    max-width: var(--measure);
+    color: var(--c-text-muted);
+  }
+
+  .qr__note {
+    font-size: var(--step--1);
+  }
+
+  .qr__code {
+    margin: 0;
+    text-align: center;
+  }
+
+  .qr__svg {
+    width: 200px;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: var(--sp-3);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+  }
+
+  .qr__svg :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .qr__code figcaption {
+    margin-block-start: var(--sp-3);
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import HotelCard from '@/components/HotelCard.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { EVENT } from '@/data/event';
+import { formatDayAndMonth } from '@/lib/format';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+// `draft` entries are deliberately withheld — a half-researched hotel is worse
+// than a shorter list.
+const hotels = (await getCollection('hotels', ({ data }) => data.status !== 'draft')).sort(
+  (a, b) => a.data.order - b.data.order || a.data.distanceKm - b.data.distanceKm,
+);
+
+const thursday = formatDayAndMonth(EVENT.coupleArrive, lang);
+---
+
+<Base lang={lang} path="/stay" title={t(lang, 'stay.title')}>
+  <PageHeader lang={lang} title={t(lang, 'stay.title')} intro={t(lang, 'stay.intro')} />
+
+  <section class="section">
+    <div class="container stack-lg">
+      <div class="card thursday">
+        <h2>{t(lang, 'stay.thursdayTitle')}</h2>
+        <p class="muted">{t(lang, 'stay.thursdayBody')}</p>
+        <p class="pill">{thursday}</p>
+      </div>
+
+      <ul class="hotels">
+        {
+          hotels.map((hotel) => (
+            <li>
+              <HotelCard lang={lang} hotel={hotel.data} />
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="notice">{t(lang, 'stay.listNote')}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .thursday {
+    max-width: var(--measure);
+    border-color: var(--c-lilac-300);
+    background: var(--c-lilac-50);
+  }
+
+  .thursday > * + * {
+    margin-block-start: var(--sp-3);
+  }
+
+  .hotels {
+    display: grid;
+    gap: var(--sp-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .hotels {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* The venue card leads and gets the full width — it is the recommendation. */
+  .hotels > li:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .notice {
+    max-width: var(--measure);
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+    font-style: italic;
+  }
+</style>

@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # So the site can be rebuilt by hand — useful when a deadline passes and the
+  # RSVP page needs to flip to its locked state, which is decided at build time.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race. Queue rather than cancel: a half-finished deploy
+# is worse than a slightly delayed one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          # A repository *variable*, not a secret — the URL is visible in the
+          # built page source no matter what, so treating it as a secret would
+          # only give false comfort. Protection lives in the backend's
+          # deadline check and honeypot.
+          PUBLIC_RSVP_ENDPOINT: ${{ vars.PUBLIC_RSVP_ENDPOINT }}
+        run: |
+          if [ -z "$PUBLIC_RSVP_ENDPOINT" ]; then
+            echo "::error::PUBLIC_RSVP_ENDPOINT is not set. Settings → Secrets and variables → Actions → Variables."
+            exit 1
+          fi
+          npm run build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

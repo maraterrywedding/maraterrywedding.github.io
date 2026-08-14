@@ -1,0 +1,264 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import DressFigures from '@/components/DressFigures.astro';
+import LocalizedText from '@/components/LocalizedText.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { pickLocalized, t } from '@/i18n/utils';
+import { CHOSEN_CODE, DRESS_CODES, DRESS_TIPS } from '@/data/dresscode';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+const chosen = CHOSEN_CODE ? DRESS_CODES.find((c) => c.id === CHOSEN_CODE) : null;
+
+const TIP_ICONS: Record<string, string> = {
+  grass: 'M12 21c0-6 3-10 8-12-4 4-5 8-5 12M12 21c0-6-3-10-8-12 4 4 5 8 5 12',
+  weather: 'M12 3v2M5 12H3M21 12h-2M6 6l1.5 1.5M18 6l-1.5 1.5M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  // Three overlapping swatches. The earlier palette outline read as a crescent
+  // moon once stroked rather than filled.
+  colour: 'M9 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM15 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  change: 'M4 8h13l-3-3M20 16H7l3 3',
+  kids: 'M12 5a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM8 21v-5l-2-3 3-3h6l3 3-2 3v5',
+};
+---
+
+<Base lang={lang} path="/dress-code" title={t(lang, 'dress.title')}>
+  <PageHeader lang={lang} title={t(lang, 'dress.title')} intro={t(lang, 'dress.intro')} />
+
+  <section class="section">
+    <div class="container">
+      {
+        chosen ? (
+          <div class="card chosen">
+            <p class="eyebrow">{t(lang, 'dress.chosenIs', { name: pickLocalized(chosen.name, lang).value })}</p>
+            <h2 class="chosen__gloss">{pickLocalized(chosen.gloss, lang).value}</h2>
+          </div>
+        ) : (
+          <div class="card chosen chosen--undecided">
+            <p class="pill pill--quiet">{t(lang, 'common.comingSoon')}</p>
+            <p class="chosen__pending">{t(lang, 'dress.notChosen')}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="container stack-lg">
+      <h2 id="dress-ladder-label">{t(lang, 'dress.compareTitle')}</h2>
+
+      {/* Scrolls sideways on a phone and contains nothing focusable, so a
+          keyboard user needs an explicit focus stop to reach the formal end of
+          the ladder. No role override — that would orphan the <li> children. */}
+      <ul class="ladder" tabindex="0" aria-labelledby="dress-ladder-label">
+        {
+          DRESS_CODES.map((code) => (
+            <li class:list={['ladder__item', code.id === CHOSEN_CODE && 'ladder__item--chosen']}>
+              <DressFigures level={code.id} />
+
+              <h3 class="ladder__name">{pickLocalized(code.name, lang).value}</h3>
+              <LocalizedText value={code.gloss} lang={lang} as="p" class="ladder__gloss" note={false} />
+
+              <dl class="ladder__detail">
+                <dt>{t(lang, 'dress.feminine')}</dt>
+                <dd>{pickLocalized(code.feminine, lang).value}</dd>
+                <dt>{t(lang, 'dress.masculine')}</dt>
+                <dd>{pickLocalized(code.masculine, lang).value}</dd>
+                <dt>{t(lang, 'dress.likeGoingTo')}</dt>
+                <dd>{pickLocalized(code.likeGoingTo, lang).value}</dd>
+              </dl>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container stack-lg">
+      <h2>{t(lang, 'dress.tipsTitle')}</h2>
+
+      <ul class="tips">
+        {
+          DRESS_TIPS.map((tip) => (
+            <li class="tip">
+              <div class="tip__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d={TIP_ICONS[tip.icon]}
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <LocalizedText value={tip.title} lang={lang} as="h3" class="tip__title" note={false} />
+                <LocalizedText value={tip.body} lang={lang} as="p" class="tip__body" />
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="card unsure">
+        <h2>{t(lang, 'dress.unsureTitle')}</h2>
+        <p class="muted">{t(lang, 'dress.unsureBody')}</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .chosen {
+    max-width: var(--measure);
+  }
+
+  .chosen--undecided {
+    border-style: dashed;
+  }
+
+  .chosen__gloss {
+    margin-block-start: var(--sp-2);
+    font-size: var(--step-2);
+  }
+
+  .chosen__pending {
+    margin-block-start: var(--sp-3);
+    color: var(--c-text-muted);
+  }
+
+  /* Horizontally scrollable on a phone so the ladder stays a ladder — reading
+     the four levels in order is the whole point of the comparison. */
+  .ladder {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(15rem, 1fr);
+    gap: var(--sp-4);
+    list-style: none;
+    margin: 0;
+    padding: 0 0 var(--sp-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  @media (min-width: 62rem) {
+    .ladder {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(4, 1fr);
+      overflow-x: visible;
+    }
+  }
+
+  .ladder__item {
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-5) var(--sp-4);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+
+  .ladder__item--chosen {
+    border: 2px solid var(--c-forest-600);
+    background: var(--c-lilac-50);
+  }
+
+  .ladder__name {
+    font-size: var(--step-1);
+  }
+
+  .ladder__gloss {
+    font-size: var(--step--1);
+    color: var(--c-lilac-700);
+    font-weight: 600;
+  }
+
+  .ladder__detail {
+    margin-block-start: var(--sp-3);
+    padding-block-start: var(--sp-3);
+    border-block-start: 1px solid var(--c-border);
+    text-align: start;
+    width: 100%;
+  }
+
+  .ladder__detail dt {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--c-lilac-700);
+  }
+
+  .ladder__detail dd {
+    margin: 0 0 var(--sp-3);
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .ladder__detail dd:last-child {
+    margin-block-end: 0;
+  }
+
+  .tips {
+    display: grid;
+    gap: var(--sp-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 52rem) {
+    .tips {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .tip {
+    display: flex;
+    gap: var(--sp-4);
+  }
+
+  .tip__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--c-lilac-100);
+    color: var(--c-forest-700);
+  }
+
+  .tip__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .tip__title {
+    font-size: var(--step-1);
+  }
+
+  .tip__body {
+    margin-block-start: var(--sp-2);
+    color: var(--c-text-muted);
+  }
+
+  .unsure {
+    max-width: var(--measure);
+    background: var(--c-bg-alt);
+  }
+
+  .unsure > * + * {
+    margin-block-start: var(--sp-3);
+  }
+</style>

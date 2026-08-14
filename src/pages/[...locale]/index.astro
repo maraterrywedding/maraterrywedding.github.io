@@ -1,0 +1,346 @@
+---
+import Base from '@/layouts/Base.astro';
+import Photo from '@/components/Photo.astro';
+import Countdown from '@/components/Countdown.astro';
+import Weather from '@/components/Weather.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import { t } from '@/i18n/utils';
+import type { Locale } from '@/i18n/locales';
+import { localizedPath } from '@/lib/paths';
+import { NAV, RSVP_PATH } from '@/lib/nav';
+import { EVENT } from '@/data/event';
+import { formatDate, formatDateWithWeekday, formatDayAndMonth, formatTime } from '@/lib/format';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+const ceremonyDate = formatDate(EVENT.ceremony, lang);
+const ceremonyTime = formatTime(EVENT.ceremony, lang);
+const arrivalTime = formatTime(EVENT.guestsArriveFrom, lang);
+const fullDate = formatDateWithWeekday(EVENT.ceremony, lang);
+const thursday = formatDayAndMonth(EVENT.coupleArrive, lang);
+
+const nextUp = [
+  { key: 'home.next.schedule', path: NAV[0]!.path, label: 'nav.schedule' },
+  { key: 'home.next.travel', path: NAV[1]!.path, label: 'nav.travel' },
+  { key: 'home.next.stay', path: NAV[2]!.path, label: 'nav.stay' },
+];
+---
+
+<Base lang={lang} path="/">
+  <section class="hero">
+    <div class="hero__media">
+      <Photo
+        name="hero"
+        lang={lang}
+        loading="eager"
+        widths={[600, 900, 1400, 2000]}
+        sizes="100vw"
+        class="hero__image"
+      />
+    </div>
+
+    <div class="hero__body">
+      <p class="hero__eyebrow">{t(lang, 'home.hero.intro')}</p>
+      <h1 class="hero__names">{EVENT.couple.display}</h1>
+      <p class="hero__date">
+        <time datetime={EVENT.ceremony.slice(0, 10)}>{fullDate}</time>
+      </p>
+      <p class="hero__venue">{EVENT.venue.name} · {EVENT.venue.city}</p>
+
+      <div class="hero__actions">
+        <a class="button" href={localizedPath(lang, RSVP_PATH)}>{t(lang, 'home.hero.cta')}</a>
+        <span class="hero__actions-note">{t(lang, 'home.hero.ctaSub')}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint countdown-band">
+    <div class="container">
+      <Countdown lang={lang} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container save">
+      <div class="save__text stack">
+        <p class="eyebrow">{t(lang, 'home.saveTheDate.title')}</p>
+        <h2>{ceremonyDate}</h2>
+        <p class="lead">
+          {
+            t(lang, 'home.saveTheDate.body', {
+              date: ceremonyDate,
+              arrival: arrivalTime,
+              ceremony: ceremonyTime,
+            })
+          }
+        </p>
+
+        {
+          !EVENT.ceremonyTimeConfirmed && (
+            <p class="pill pill--quiet">{t(lang, 'home.hero.timeTbc')}</p>
+          )
+        }
+
+        <p class="save__friday">{t(lang, 'home.hero.friday')}</p>
+
+        <p class="save__thursday">
+          {t(lang, 'home.saveTheDate.weAreThereFrom', { date: thursday })}
+        </p>
+      </div>
+
+      <figure class="save__figure">
+        <Photo
+          name="venueFromRiver"
+          lang={lang}
+          widths={[400, 800, 1200]}
+          sizes="(min-width: 48rem) 28rem, 100vw"
+          class="save__image"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <Weather lang={lang} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container stack-lg">
+      <h2>{t(lang, 'home.next.title')}</h2>
+      <ul class="next">
+        {
+          nextUp.map((item) => (
+            <li>
+              <a class="next__card" href={localizedPath(lang, item.path)}>
+                <span class="next__label">{t(lang, item.label)}</span>
+                <span class="next__desc">{t(lang, item.key)}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---- Hero ---- */
+
+  /* Photo and text are stacked in a single grid cell rather than positioned
+     absolutely. That way the hero is always at least as tall as its text —
+     on a narrow phone the copy can never spill up over the faces. */
+  .hero {
+    display: grid;
+    isolation: isolate;
+    min-height: min(86dvh, 42rem);
+  }
+
+  .hero > * {
+    grid-area: 1 / 1;
+  }
+
+  .hero__media {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero__media::after {
+    /* Warm scrim: light at the top so the photo reads, deep at the bottom so
+       the display type sits on solid ground. */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgb(22 40 29 / 0.12) 0%,
+      rgb(22 40 29 / 0.14) 28%,
+      rgb(22 40 29 / 0.55) 52%,
+      rgb(22 40 29 / 0.86) 100%
+    );
+  }
+
+  /* Absolutely positioned on purpose. As a normal in-flow child the image
+     would size the grid row, and `height: 100%` would then be circular — the
+     row depends on the image, the image depends on the row — so the browser
+     falls back to the intrinsic 4:3 height and the hero grows to 960px.
+     Taking it out of flow lets the row be sized by the text plus min-height,
+     and the image simply fills whatever that turns out to be. */
+  .hero :global(.hero__image) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The source is a 4:3 selfie cropped into a wide banner, so the vertical
+       anchor matters: any lower and the taller of the two loses the top of
+       their head. */
+    object-position: center 22%;
+  }
+
+  .hero__body {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding: var(--sp-6) var(--sp-5) var(--sp-7);
+    color: var(--c-white);
+    text-align: center;
+    text-shadow: 0 1px 12px rgb(22 40 29 / 0.45);
+  }
+
+  @media (min-width: 48rem) {
+    .hero {
+      min-height: min(78dvh, 40rem);
+    }
+  }
+
+  .hero__eyebrow {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    /* lilac-200 sits at roughly 3:1 against the mid-tones of the photo;
+       lilac-100 clears 4.5:1 with the scrim behind it. */
+    color: var(--c-lilac-100);
+  }
+
+  .hero__names {
+    margin-block-start: var(--sp-2);
+    font-size: var(--step-4);
+    color: var(--c-white);
+  }
+
+  .hero__date {
+    margin-block-start: var(--sp-3);
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+  }
+
+  .hero__venue {
+    font-size: var(--step--1);
+    color: color-mix(in srgb, var(--c-white) 80%, transparent);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-block-start: var(--sp-5);
+  }
+
+  .hero__actions .button {
+    background: var(--c-white);
+    color: var(--c-forest-800);
+  }
+
+  .hero__actions .button:hover {
+    background: var(--c-lilac-100);
+  }
+
+  .hero__actions-note {
+    font-size: var(--step--1);
+    color: color-mix(in srgb, var(--c-white) 75%, transparent);
+  }
+
+  /* ---- Countdown ---- */
+
+  .countdown-band {
+    padding-block: var(--sp-6);
+  }
+
+  /* ---- Save the date ---- */
+
+  .save {
+    display: grid;
+    gap: var(--sp-6);
+    align-items: center;
+  }
+
+  @media (min-width: 48rem) {
+    .save {
+      grid-template-columns: 1fr 28rem;
+    }
+  }
+
+  .save__text {
+    max-width: var(--measure);
+  }
+
+  .save__friday {
+    font-weight: 600;
+    color: var(--c-forest-700);
+  }
+
+  .save__thursday {
+    padding: var(--sp-4);
+    border-inline-start: 3px solid var(--c-lilac-400);
+    background: var(--c-white);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--c-text-muted);
+  }
+
+  .save__figure {
+    margin: 0;
+  }
+
+  .save :global(.save__image) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  /* ---- Next up ---- */
+
+  .next {
+    display: grid;
+    gap: var(--sp-4);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media (min-width: 42rem) {
+    .next {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .next__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    height: 100%;
+    padding: var(--sp-5);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+    background: var(--c-white);
+    text-decoration: none;
+    transition:
+      border-color 140ms ease,
+      transform 140ms ease;
+  }
+
+  .next__card:hover {
+    border-color: var(--c-lilac-400);
+    transform: translateY(-2px);
+  }
+
+  .next__label {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--c-forest-800);
+  }
+
+  .next__desc {
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+</style>

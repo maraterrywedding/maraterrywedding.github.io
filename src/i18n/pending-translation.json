@@ -1,0 +1,5 @@
+{
+  "_comment": "Keys that exist in en.json but are deliberately not translated yet. The i18n test fails if a key is missing from de.json or pt.json without being listed here, so nothing goes untranslated by accident. Block 6's job is to empty both arrays.",
+  "de": [],
+  "pt": []
+}

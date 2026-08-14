@@ -1,0 +1,272 @@
+---
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath, stripLocale } from '@/lib/paths';
+import { NAV, RSVP_PATH } from '@/lib/nav';
+import LangSwitcher from './LangSwitcher.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+
+const current = stripLocale(Astro.url.pathname).replace(/\/$/, '') || '/';
+const isActive = (path: string) => current === path.replace(/\/$/, '');
+
+const items = NAV.map((item) => ({
+  label: t(lang, item.key),
+  href: localizedPath(lang, item.path),
+  active: isActive(item.path),
+}));
+---
+
+<header class="site-header" data-menu>
+  <div class="container site-header__inner">
+    <a class="wordmark" href={localizedPath(lang, '/')}>
+      {t(lang, 'site.title')}
+    </a>
+
+    <button class="menu__button" type="button" aria-expanded="false" aria-controls="site-menu" data-menu-toggle>
+      <span>{t(lang, 'nav.menu')}</span>
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path
+          d="M3 6h14M3 10h14M3 14h14"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"></path>
+      </svg>
+    </button>
+
+    <div class="menu__panel" id="site-menu">
+      <nav aria-label={t(lang, 'nav.label')}>
+        <ul class="menu__list">
+          {
+            items.map((item) => (
+              <li>
+                <a href={item.href} aria-current={item.active ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="menu__foot">
+        <a class="button button--secondary" href={localizedPath(lang, RSVP_PATH)}>
+          {t(lang, 'nav.rsvp')}
+        </a>
+        <LangSwitcher lang={lang} compact />
+      </div>
+    </div>
+  </div>
+</header>
+
+{/* Without JavaScript the panel simply stays open — a plain stacked list of
+    links. Less pretty, still completely usable. */}
+<noscript>
+  <style>
+    .menu__button {
+      display: none !important;
+    }
+    .menu__panel {
+      display: block !important;
+      position: static !important;
+      box-shadow: none !important;
+      border: 0 !important;
+    }
+  </style>
+</noscript>
+
+<script>
+  // Small enough to inline, and it buys a real <button> with aria-expanded
+  // rather than a checkbox or a <details> that CSS cannot reopen on desktop.
+  const header = document.querySelector<HTMLElement>('[data-menu]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+
+  if (header && toggle) {
+    const setOpen = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(!header.classList.contains('is-open'));
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && header.classList.contains('is-open')) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!header.contains(event.target as Node)) setOpen(false);
+    });
+
+    // Navigating to an anchor on the same page should not leave the menu open.
+    header.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--c-paper) 94%, transparent);
+    backdrop-filter: blur(8px);
+    border-block-end: 1px solid var(--c-border);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    min-height: 64px;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 600;
+    color: var(--c-forest-800);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* ---- Mobile: collapsed behind a button ---- */
+
+  .menu__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: var(--tap);
+    padding-inline: var(--sp-3);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--c-forest-800);
+    cursor: pointer;
+  }
+
+  .menu__button:hover {
+    background: var(--c-lilac-100);
+  }
+
+  .menu__button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .menu__panel {
+    display: none;
+    position: absolute;
+    inset-inline-end: var(--sp-5);
+    inset-block-start: calc(100% + var(--sp-1));
+    min-width: min(18rem, calc(100vw - var(--sp-6)));
+    padding: var(--sp-3);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  .site-header.is-open .menu__panel {
+    display: block;
+  }
+
+  .menu__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu__list a {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding-inline: var(--sp-3);
+    border-radius: var(--radius);
+    color: var(--c-forest-800);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .menu__list a:hover {
+    background: var(--c-lilac-50);
+  }
+
+  .menu__list a[aria-current='page'] {
+    background: var(--c-lilac-100);
+    color: var(--c-lilac-700);
+    font-weight: 600;
+  }
+
+  .menu__foot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    align-items: stretch;
+    margin-block-start: var(--sp-3);
+    padding-block-start: var(--sp-3);
+    border-block-start: 1px solid var(--c-border);
+  }
+
+  /* ---- Desktop: laid out flat, button gone ---- */
+
+  /* 66rem, not 62rem: with six nav items, an RSVP button and three language
+     controls all on one row, a lower breakpoint makes the labels wrap. */
+  @media (min-width: 66rem) {
+    .menu__button {
+      display: none;
+    }
+
+    /* A plain display override — no reliance on any disclosure element's
+       internal open state, which is what makes this work at every width. */
+    .menu__panel,
+    .site-header.is-open .menu__panel {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+      position: static;
+      min-width: 0;
+      padding: 0;
+      background: none;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .menu__list {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-1);
+    }
+
+    .menu__list a {
+      padding-inline: var(--sp-3);
+      font-size: var(--step--1);
+      white-space: nowrap;
+    }
+
+    .menu__foot {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--sp-4);
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .menu__foot .button {
+      min-height: 40px;
+      padding-inline: var(--sp-4);
+    }
+  }
+</style>

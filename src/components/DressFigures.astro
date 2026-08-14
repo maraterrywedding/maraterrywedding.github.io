@@ -1,0 +1,66 @@
+---
+import type { DressLevel } from '@/data/dresscode';
+
+interface Props {
+  level: DressLevel;
+}
+
+const { level } = Astro.props;
+
+/**
+ * Abstract silhouettes rather than photographs. Photos of real people would
+ * need licensing, would date quickly, and would imply "wear this exact outfit"
+ * — which is the opposite of what a dress code is for. Two figures per card,
+ * differing only in hem length and a couple of details, so the ladder of
+ * formality reads at a glance.
+ */
+const HEM: Record<DressLevel, { dress: number; leg: number }> = {
+  'smart-casual': { dress: 108, leg: 132 },
+  cocktail: { dress: 120, leg: 138 },
+  formal: { dress: 142, leg: 142 },
+  'black-tie': { dress: 150, leg: 146 },
+};
+
+const { dress, leg } = HEM[level];
+const flare = level === 'smart-casual' ? 6 : level === 'cocktail' ? 9 : 14;
+const hasTie = level === 'formal' || level === 'black-tie';
+const hasBowTie = level === 'black-tie';
+---
+
+<svg class="figures" viewBox="0 0 120 160" role="presentation" focusable="false">
+  {/* Left figure: fitted bodice flaring into a skirt whose hem marks formality. */}
+  <circle cx="34" cy="24" r="10" />
+  <path
+    d={`M25 40 L43 40 L45 76 L${52 + flare} ${dress} L${16 - flare} ${dress} L23 76 Z`}
+  />
+
+  {/* Right figure: torso, then two legs; a tie appears at the formal end. */}
+  <circle cx="86" cy="24" r="10" />
+  <path d="M75 40 L97 40 L99 96 L73 96 Z" />
+  <path d={`M76 96 L84 96 L84 ${leg} L77 ${leg} Z`} />
+  <path d={`M88 96 L96 96 L95 ${leg} L88 ${leg} Z`} />
+
+  {hasTie && !hasBowTie && <path d="M86 42 L89 48 L86 62 L83 48 Z" class="figures__accent" />}
+  {
+    hasBowTie && (
+      <path d="M81 45 L86 48 L91 45 L91 51 L86 48 L81 51 Z" class="figures__accent" />
+    )
+  }
+</svg>
+
+<style>
+  .figures {
+    width: 100%;
+    max-width: 130px;
+    height: auto;
+    fill: var(--c-lilac-300);
+  }
+
+  .figures circle {
+    fill: var(--c-lilac-400);
+  }
+
+  .figures__accent {
+    fill: var(--c-forest-600);
+  }
+</style>

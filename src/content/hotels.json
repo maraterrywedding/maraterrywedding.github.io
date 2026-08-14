@@ -1,0 +1,93 @@
+[
+  {
+    "id": "grohnder-faehrhaus",
+    "name": "Grohnder Fährhaus",
+    "town": "Grohnde",
+    "distanceKm": 0,
+    "minutesByCar": null,
+    "url": "https://www.grohnder-faehrhaus-hotel.de/",
+    "phone": null,
+    "priceBand": "mid",
+    "kind": "hotel",
+    "isVenue": true,
+    "order": 0,
+    "status": "provisional",
+    "note": {
+      "en": "The wedding venue itself, and by far the easiest option — you can go straight upstairs at the end of the night. Tell us in your RSVP which nights you would want and we will pass the list on.",
+      "de": "Die Hochzeitslocation selbst und mit Abstand die einfachste Lösung — am Ende des Abends geht ihr einfach nach oben. Sagt uns in der Zusage, welche Nächte ihr möchtet, dann geben wir die Liste weiter.",
+      "pt": "O próprio local do casamento e, de longe, a opção mais fácil — no fim da noite é só subir. Digam na confirmação de presença quais noites vocês querem e a gente repassa a lista."
+    }
+  },
+  {
+    "id": "weserglueck-grohnde",
+    "name": "Weserglück Ferienwohnung Grohnde",
+    "town": "Grohnde",
+    "distanceKm": 1,
+    "minutesByCar": 3,
+    "url": null,
+    "phone": null,
+    "priceBand": "budget",
+    "kind": "apartment",
+    "order": 10,
+    "status": "provisional",
+    "note": {
+      "en": "A recently renovated apartment in Grohnde itself, within walking distance. Good for a family or a couple of friends sharing.",
+      "de": "Eine frisch renovierte Ferienwohnung direkt in Grohnde, zu Fuß erreichbar. Gut für eine Familie oder ein paar Freunde zusammen.",
+      "pt": "Um apartamento reformado recentemente na própria Grohnde, dá para ir a pé. Bom para uma família ou alguns amigos dividindo."
+    }
+  },
+  {
+    "id": "apartments-rischmuehle",
+    "name": "Apartments Rischmühle",
+    "town": "Emmerthal",
+    "distanceKm": 6,
+    "minutesByCar": 10,
+    "url": null,
+    "phone": null,
+    "priceBand": "budget",
+    "kind": "apartment",
+    "order": 20,
+    "status": "provisional",
+    "note": {
+      "en": "Apartments a short drive from the venue, on the Emmerthal side.",
+      "de": "Apartments wenige Autominuten von der Location entfernt, auf der Emmerthaler Seite.",
+      "pt": "Apartamentos a poucos minutos de carro do local, do lado de Emmerthal."
+    }
+  },
+  {
+    "id": "ferienhaus-emmerthal",
+    "name": "Ferienhaus & Apartments Emmerthal",
+    "town": "Emmerthal",
+    "distanceKm": 6,
+    "minutesByCar": 10,
+    "url": null,
+    "phone": null,
+    "priceBand": "budget",
+    "kind": "guesthouse",
+    "order": 30,
+    "status": "provisional",
+    "note": {
+      "en": "A house and apartments with parking and a balcony. Sensible if a few of you want to stay together.",
+      "de": "Ein Haus mit Apartments, Parkplatz und Balkon. Sinnvoll, wenn ihr zu mehreren zusammen bleiben wollt.",
+      "pt": "Uma casa com apartamentos, estacionamento e sacada. Faz sentido se vocês quiserem ficar juntos."
+    }
+  },
+  {
+    "id": "christinenhof-hameln",
+    "name": "Historik Hotel Garni Christinenhof",
+    "town": "Hameln",
+    "distanceKm": 13,
+    "minutesByCar": 18,
+    "url": null,
+    "phone": null,
+    "priceBand": "mid",
+    "kind": "hotel",
+    "order": 40,
+    "status": "provisional",
+    "note": {
+      "en": "In a 17th-century timbered building in Hameln's old town, with a pool and sauna. Worth considering if you are making a weekend of it — Hameln is a lovely place to wander, though you will need a taxi back after the party.",
+      "de": "In einem Fachwerkhaus aus dem 17. Jahrhundert in der Hamelner Altstadt, mit Pool und Sauna. Lohnt sich, wenn ihr ein Wochenende daraus macht — Hameln lädt zum Bummeln ein, allerdings braucht ihr nach der Party ein Taxi zurück.",
+      "pt": "Em um casarão de enxaimel do século XVII no centro histórico de Hameln, com piscina e sauna. Vale a pena se vocês forem emendar um fim de semana — Hameln é ótima para passear, mas vão precisar de táxi na volta da festa."
+    }
+  }
+]

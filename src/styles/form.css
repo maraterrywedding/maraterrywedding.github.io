@@ -1,0 +1,668 @@
+/*
+ * Form styles.
+ *
+ * GLOBAL on purpose, not scoped to a component. The attendee repeater clones a
+ * <template> and the script adds and removes cards, and Astro's scoped CSS
+ * compiles to attribute selectors that JavaScript-touched elements can silently
+ * miss. Keeping form styles global removes that whole class of bug.
+ *
+ * Sizing rules that are not negotiable on a phone:
+ *  - inputs are at least 16px, or iOS Safari zooms the page on focus
+ *  - anything tappable is at least 48px in its smaller dimension
+ */
+
+/* ---------- Wizard shell ---------- */
+
+.wizard {
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
+.wizard__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-block-end: var(--sp-5);
+}
+
+.wizard__bar {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--c-lilac-100);
+  overflow: hidden;
+}
+
+.wizard__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--c-forest-600);
+  transition: width 240ms ease;
+}
+
+.wizard__count {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--c-text-muted);
+  white-space: nowrap;
+}
+
+.wizard__step[hidden],
+[hidden] {
+  display: none !important;
+}
+
+.wizard__heading {
+  font-size: var(--step-2);
+}
+
+.wizard__intro {
+  margin-block-start: var(--sp-2);
+  color: var(--c-text-muted);
+}
+
+.wizard__body > * + * {
+  margin-block-start: var(--sp-5);
+}
+
+.wizard__nav {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  margin-block-start: var(--sp-6);
+  padding-block-start: var(--sp-5);
+  border-block-start: 1px solid var(--c-border);
+}
+
+.wizard__nav .button {
+  flex: 1;
+}
+
+.wizard__nav .button--secondary {
+  flex: 0 1 auto;
+}
+
+.wizard__running {
+  margin-inline-start: auto;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--c-forest-700);
+}
+
+/* ---------- Fields ---------- */
+
+.field + .field,
+.field + .fieldset,
+.fieldset + .field,
+.fieldset + .fieldset {
+  margin-block-start: var(--sp-5);
+}
+
+.field__label,
+.fieldset__legend {
+  display: block;
+  font-weight: 600;
+  color: var(--c-forest-800);
+  margin-block-end: var(--sp-2);
+}
+
+/* For labels that WRAP their input, which is how the cloned attendee cards
+   associate the two without needing ids. */
+.field__label--wrap {
+  margin-block-end: 0;
+}
+
+.field__label--wrap > span {
+  display: block;
+  margin-block-end: var(--sp-2);
+}
+
+.field__hint {
+  display: block;
+  margin-block-start: var(--sp-2);
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+.field__optional {
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--sp-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-white);
+  font-size: 1rem;
+}
+
+.input:focus-visible {
+  border-color: var(--c-forest-600);
+}
+
+textarea.input {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Errors are announced and visible, never colour alone. */
+.field__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-2);
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--c-danger);
+}
+
+.field__error::before {
+  content: '!';
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: 50%;
+  background: var(--c-danger);
+  color: var(--c-white);
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+.field__error:empty {
+  display: none;
+}
+
+.has-error .input,
+.has-error .chip,
+.has-error .stepper {
+  border-color: var(--c-danger);
+}
+
+/* ---------- Choice cards (the first screen) ---------- */
+
+.choices {
+  display: grid;
+  gap: var(--sp-3);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  min-height: 64px;
+  padding: var(--sp-4) var(--sp-5);
+  border: 2px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  background: var(--c-white);
+  cursor: pointer;
+}
+
+.choice:hover {
+  border-color: var(--c-lilac-400);
+}
+
+.choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.choice:has(input:checked) {
+  border-color: var(--c-forest-600);
+  background: var(--c-lilac-50);
+}
+
+.choice:has(input:focus-visible) {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+.choice__mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-block-start: 2px;
+  border-radius: 50%;
+  border: 2px solid var(--c-lilac-300);
+  color: transparent;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.choice:has(input:checked) .choice__mark {
+  background: var(--c-forest-600);
+  border-color: var(--c-forest-600);
+  color: var(--c-white);
+}
+
+.choice__title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  color: var(--c-forest-800);
+}
+
+.choice__sub {
+  display: block;
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+/* ---------- Chips (small single- or multi-select) ---------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  padding: var(--sp-2) var(--sp-4);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius-pill);
+  background: var(--c-white);
+  font-size: var(--step--1);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--c-lilac-400);
+  background: var(--c-lilac-50);
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.chip:has(input:checked) {
+  border-color: var(--c-forest-600);
+  background: var(--c-forest-600);
+  color: var(--c-white);
+  font-weight: 600;
+}
+
+.chip:has(input:focus-visible) {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Checkbox and switch rows ---------- */
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  min-height: var(--tap);
+  padding-block: var(--sp-2);
+  cursor: pointer;
+}
+
+.check input {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-block-start: 2px;
+  accent-color: var(--c-forest-600);
+}
+
+.check__text {
+  flex: 1;
+}
+
+.check__sub {
+  display: block;
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+.check--boxed {
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--c-white);
+}
+
+.check--boxed + .check--boxed {
+  margin-block-start: var(--sp-3);
+}
+
+/* ---------- Stepper ---------- */
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-pill);
+  background: var(--c-white);
+}
+
+.stepper__button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--c-lilac-100);
+  color: var(--c-forest-800);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.stepper__button:hover:not(:disabled) {
+  background: var(--c-lilac-200);
+}
+
+.stepper__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepper__value {
+  min-width: 2.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The real input stays in the DOM for form semantics but is not the control. */
+.stepper input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ---------- Phone ---------- */
+
+.phone {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.phone select {
+  flex: 0 0 6.5rem;
+}
+
+.phone .input {
+  flex: 1;
+}
+
+/* ---------- Attendee cards ---------- */
+
+.attendees {
+  display: grid;
+  gap: var(--sp-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attendee {
+  position: relative;
+  padding: var(--sp-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  background: var(--c-white);
+}
+
+.attendee__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-block-end: var(--sp-3);
+}
+
+.attendee__index {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-lilac-700);
+}
+
+.attendee__remove {
+  min-height: 40px;
+  padding-inline: var(--sp-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--c-danger);
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.attendee__remove:hover {
+  background: var(--c-danger-bg);
+}
+
+.attendee__body > * + * {
+  margin-block-start: var(--sp-4);
+}
+
+.attendee__reveal {
+  padding-block-start: var(--sp-3);
+  border-block-start: 1px dashed var(--c-border);
+}
+
+.attendee__addRow {
+  display: flex;
+  justify-content: center;
+  margin-block-start: var(--sp-4);
+}
+
+/* ---------- Summary readback ---------- */
+
+.summary {
+  padding: var(--sp-5);
+  border: 1px solid var(--c-lilac-200);
+  border-radius: var(--radius-lg);
+  background: var(--c-lilac-50);
+}
+
+.summary__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding-block: var(--sp-3);
+  border-block-end: 1px solid var(--c-lilac-200);
+}
+
+.summary__row:last-child {
+  border-block-end: 0;
+}
+
+.summary__label {
+  flex: 0 0 8rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--c-lilac-700);
+}
+
+.summary__value {
+  flex: 1;
+  min-width: 12rem;
+}
+
+/* ---------- Honeypot ---------- */
+
+/* Off-screen rather than display:none — some bots skip hidden fields. */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---------- Consent ---------- */
+
+.consent {
+  padding: var(--sp-5);
+  border: 2px solid var(--c-lilac-300);
+  border-radius: var(--radius-lg);
+  background: var(--c-lilac-50);
+}
+
+.consent__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--step-1);
+}
+
+.consent__required {
+  padding: 2px var(--sp-3);
+  border-radius: var(--radius-pill);
+  background: var(--c-forest-700);
+  color: var(--c-white);
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.consent__intro {
+  margin-block: var(--sp-3) var(--sp-4);
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+.consent .check--boxed {
+  border-color: var(--c-lilac-300);
+}
+
+/* ---------- Invitation code gate ---------- */
+
+.gate__card {
+  max-width: 30rem;
+  margin-inline: auto;
+}
+
+.gate__card > * + * {
+  margin-block-start: var(--sp-4);
+}
+
+.gate__heading {
+  font-size: var(--step-2);
+}
+
+.gate__input {
+  max-width: 16rem;
+  font-size: 1.25rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gate__lost {
+  font-size: var(--step--1);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--c-border);
+}
+
+.gate__flagged {
+  max-width: 42rem;
+  margin: 0 auto var(--sp-5);
+}
+
+/* ---------- Party code on the success screen ---------- */
+
+.party-code {
+  padding: var(--sp-5);
+  border: 2px dashed var(--c-lilac-400);
+  border-radius: var(--radius-lg);
+  background: var(--c-lilac-50);
+  text-align: center;
+}
+
+.party-code__label {
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-lilac-700);
+}
+
+.party-code__value {
+  margin-block: var(--sp-2);
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--c-forest-800);
+}
+
+.party-code__hint {
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+/* ---------- Notices ---------- */
+
+.lang-note {
+  margin-block-end: var(--sp-5);
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+.notice-box {
+  padding: var(--sp-4);
+  border-inline-start: 3px solid var(--c-lilac-400);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--c-white);
+  font-size: var(--step--1);
+  color: var(--c-text-muted);
+}
+
+.notice-box--warn {
+  border-color: var(--c-danger);
+  background: var(--c-danger-bg);
+  color: var(--c-danger);
+  font-weight: 600;
+}
+
+.error-summary {
+  padding: var(--sp-4);
+  border: 2px solid var(--c-danger);
+  border-radius: var(--radius);
+  background: var(--c-danger-bg);
+  color: var(--c-danger);
+  font-weight: 600;
+}

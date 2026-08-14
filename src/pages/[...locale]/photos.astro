@@ -1,0 +1,38 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import QrPanel from '@/components/QrPanel.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { EVENT } from '@/data/event';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+---
+
+<Base lang={lang} path="/photos" title={t(lang, 'photos.title')}>
+  <PageHeader lang={lang} title={t(lang, 'photos.title')} intro={t(lang, 'photos.intro')} />
+
+  <section class="section">
+    <div class="container stack-lg">
+      <QrPanel
+        lang={lang}
+        url={EVENT.albums.memories}
+        title={t(lang, 'photos.memories.title')}
+        body={t(lang, 'photos.memories.body')}
+        ctaLabel={t(lang, 'photos.memories.cta')}
+      />
+
+      <QrPanel
+        lang={lang}
+        url={EVENT.albums.party}
+        title={t(lang, 'photos.party.title')}
+        body={t(lang, 'photos.party.body')}
+        ctaLabel={t(lang, 'photos.party.cta')}
+        waitingNote={t(lang, 'photos.party.waiting')}
+      />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,38 @@
+node_modules/
+dist/
+.astro/
+
+# Throwaway working files: contact sheets, screenshots, ad-hoc scripts
+scratch/
+
+# Editor cruft
+.obsidian/
+
+# ORIGINAL PHOTOS — deliberately not committed.
+#
+# GitHub Pages on the free plan needs a public repo, and these files still carry
+# 16–32 KB of EXIF each, which on phone photos includes the GPS coordinates of
+# where they were taken. Publishing that would undo the EXIF stripping that
+# scripts/prep-photos.mjs does on purpose.
+#
+# The web-ready copies in src/assets/photos/ ARE committed and are clean.
+# Keep this folder backed up somewhere else — it is the only copy of the
+# originals, and `npm run prep-photos` regenerates the site images from it.
+resources/fotos/
+.env
+.env.local
+.env.*.local
+
+# Apps Script build output + the clasp project link (contains the script ID)
+gas/dist/
+gas/.clasp.json
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini

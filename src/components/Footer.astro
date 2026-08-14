@@ -1,0 +1,114 @@
+---
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+import { IMPRINT_PATH, PRIVACY_PATH } from '@/lib/nav';
+import { EVENT, venueAddress } from '@/data/event';
+import { formatDateWithWeekday } from '@/lib/format';
+import LangSwitcher from './LangSwitcher.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const dateLine = formatDateWithWeekday(EVENT.ceremony, lang);
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <p class="site-footer__names">{EVENT.couple.display}</p>
+      <p class="site-footer__meta">{dateLine}</p>
+      <p class="site-footer__meta">{venueAddress()}</p>
+    </div>
+
+    <div class="site-footer__links">
+      <a href={localizedPath(lang, PRIVACY_PATH)}>{t(lang, 'footer.privacy')}</a>
+      <a href={localizedPath(lang, IMPRINT_PATH)}>{t(lang, 'imprint.title')}</a>
+      {
+        EVENT.contact.email && (
+          <a href={`mailto:${EVENT.contact.email}`}>{t(lang, 'footer.contact')}</a>
+        )
+      }
+      <LangSwitcher lang={lang} />
+    </div>
+  </div>
+
+  <p class="site-footer__note">{t(lang, 'footer.note')}</p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-block-start: auto;
+    padding-block: var(--sp-7) var(--sp-5);
+    background: var(--c-forest-900);
+    color: color-mix(in srgb, var(--c-white) 82%, transparent);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+    justify-content: space-between;
+  }
+
+  @media (min-width: 48rem) {
+    .site-footer__inner {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+  }
+
+  .site-footer__names {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    color: var(--c-white);
+  }
+
+  .site-footer__meta {
+    font-size: var(--step--1);
+    line-height: 1.7;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .site-footer__links a {
+    color: var(--c-lilac-200);
+    text-decoration-color: color-mix(in srgb, var(--c-lilac-200) 45%, transparent);
+    font-size: var(--step--1);
+  }
+
+  .site-footer__links a:hover {
+    color: var(--c-white);
+  }
+
+  .site-footer__note {
+    margin-block-start: var(--sp-6);
+    text-align: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step--1);
+    color: color-mix(in srgb, var(--c-white) 55%, transparent);
+  }
+
+  /* The switcher sits on a dark ground here, so it needs its own colours. */
+  .site-footer__links :global(.lang__item) {
+    color: var(--c-lilac-200);
+  }
+
+  .site-footer__links :global(a.lang__item:hover) {
+    background: color-mix(in srgb, var(--c-white) 12%, transparent);
+    color: var(--c-white);
+  }
+
+  .site-footer__links :global(.lang__item--current) {
+    background: color-mix(in srgb, var(--c-white) 14%, transparent);
+    color: var(--c-white);
+  }
+</style>

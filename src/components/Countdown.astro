@@ -1,0 +1,158 @@
+---
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { EVENT } from '@/data/event';
+import { countdown } from '@/lib/countdown';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+
+/**
+ * Rendered once at build time, then corrected and ticked by the script below.
+ *
+ * Server-rendering it first means someone with JavaScript blocked still sees a
+ * real number rather than an empty box. It will be as stale as the last deploy,
+ * which for a countdown measured in months is close enough to be honest.
+ */
+const initial = countdown(new Date(), EVENT.ceremony, EVENT.timeZone);
+
+const units = [
+  { key: 'days', value: initial.days, label: t(lang, 'home.countdown.days') },
+  { key: 'hours', value: initial.hours, label: t(lang, 'home.countdown.hours') },
+  { key: 'minutes', value: initial.minutes, label: t(lang, 'home.countdown.minutes') },
+  { key: 'seconds', value: initial.seconds, label: t(lang, 'home.countdown.seconds') },
+];
+---
+
+<div
+  class="countdown"
+  data-countdown
+  data-target={EVENT.ceremony}
+  data-timezone={EVENT.timeZone}
+  data-today={t(lang, 'home.countdown.today')}
+  data-past={t(lang, 'home.countdown.passed')}
+>
+  <p class="eyebrow countdown__title">{t(lang, 'home.countdown.title')}</p>
+
+  <ul class="countdown__units" data-countdown-units hidden={initial.state !== 'counting'}>
+    {
+      units.map((unit) => (
+        <li class="unit">
+          <span class="unit__value" data-unit={unit.key}>
+            {unit.value}
+          </span>
+          <span class="unit__label">{unit.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="countdown__message" data-countdown-message hidden={initial.state === 'counting'}>
+    {initial.state === 'past' ? t(lang, 'home.countdown.passed') : t(lang, 'home.countdown.today')}
+  </p>
+</div>
+
+<script>
+  import { countdown } from '@/lib/countdown';
+
+  const root = document.querySelector<HTMLElement>('[data-countdown]');
+  const unitList = root?.querySelector<HTMLElement>('[data-countdown-units]');
+  const message = root?.querySelector<HTMLElement>('[data-countdown-message]');
+
+  if (root && unitList && message) {
+    const target = root.dataset.target!;
+    const timeZone = root.dataset.timezone!;
+    const values = new Map<string, HTMLElement>();
+    for (const node of root.querySelectorAll<HTMLElement>('[data-unit]')) {
+      values.set(node.dataset.unit!, node);
+    }
+
+    const render = () => {
+      const parts = countdown(Date.now(), target, timeZone);
+
+      if (parts.state === 'counting') {
+        unitList.hidden = false;
+        message.hidden = true;
+        values.get('days')!.textContent = String(parts.days);
+        // Pad only the sub-day units, so "5 days" reads naturally but the
+        // clock digits do not jitter in width as they tick.
+        values.get('hours')!.textContent = String(parts.hours).padStart(2, '0');
+        values.get('minutes')!.textContent = String(parts.minutes).padStart(2, '0');
+        values.get('seconds')!.textContent = String(parts.seconds).padStart(2, '0');
+        return true;
+      }
+
+      unitList.hidden = true;
+      message.hidden = false;
+      message.textContent = parts.state === 'past' ? root.dataset.past! : root.dataset.today!;
+      return false;
+    };
+
+    if (render()) {
+      const timer = window.setInterval(() => {
+        // Once it reaches the day itself there is nothing left to tick.
+        if (!render()) window.clearInterval(timer);
+      }, 1000);
+    }
+  }
+</script>
+
+<style>
+  .countdown {
+    text-align: center;
+  }
+
+  .countdown__title {
+    color: var(--c-lilac-700);
+  }
+
+  .countdown__units {
+    display: flex;
+    justify-content: center;
+    gap: var(--sp-3);
+    list-style: none;
+    margin: var(--sp-4) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 30rem) {
+    .countdown__units {
+      gap: var(--sp-5);
+    }
+  }
+
+  .unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 3.75rem;
+  }
+
+  .unit__value {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.1;
+    color: var(--c-forest-800);
+    /* Tabular figures stop the layout shifting as the seconds tick. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .unit__label {
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .countdown__message {
+    margin-block-start: var(--sp-4);
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    color: var(--c-forest-800);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+</style>

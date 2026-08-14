@@ -1,0 +1,104 @@
+---
+import { LOCALES, LOCALE_NAMES, LOCALE_TAGS, type Locale } from '@/i18n/locales';
+import { switchLocalePath } from '@/lib/paths';
+import { t } from '@/i18n/utils';
+
+interface Props {
+  lang: Locale;
+  /** Show two-letter codes instead of full names — the header runs out of room. */
+  compact?: boolean;
+}
+
+const { lang, compact = false } = Astro.props;
+
+// Astro.url carries the query string and hash of the page being rendered.
+// switchLocalePath preserves both — switching language on /rsvp/edit?t=… must
+// not throw away the guest's edit token.
+const targets = LOCALES.map((locale) => ({
+  locale,
+  href: switchLocalePath(locale, Astro.url),
+  name: LOCALE_NAMES[locale],
+  tag: LOCALE_TAGS[locale],
+}));
+---
+
+<nav class="lang" aria-label={t(lang, 'lang.label')}>
+  <ul class="lang__list">
+    {
+      targets.map(({ locale, href, name, tag }) => (
+        <li>
+          {locale === lang ? (
+            <span class="lang__item lang__item--current" aria-current="true" lang={tag}>
+              {/* The visible label may shrink to a code, but the accessible
+                  name always stays the full language name. */}
+              <span aria-hidden="true">{compact ? locale.toUpperCase() : name}</span>
+              <span class="visually-hidden">{name}</span>
+            </span>
+          ) : (
+            <a
+              class="lang__item"
+              data-lang-link
+              href={href}
+              lang={tag}
+              hreflang={tag}
+              title={name}
+              aria-label={t(lang, 'lang.switchTo', { name })}
+            >
+              <span aria-hidden="true">{compact ? locale.toUpperCase() : name}</span>
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  // These hrefs are built at build time, when there is no query string to
+  // carry over — `Astro.url` on a prerendered page has only a path. So on a
+  // page like /rsvp/edit?t=<token> the token exists solely in the browser's
+  // address bar, and the links have to be repaired on load.
+  //
+  // Without this, a guest who taps "Deutsch" while editing their RSVP loses the
+  // only credential they have for their own submission. The pure function is
+  // unit-tested and correct; it simply never received the query string.
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]')) {
+    if (!location.search && !location.hash) break;
+    const url = new URL(link.href, location.origin);
+    url.search = location.search;
+    url.hash = location.hash;
+    link.href = `${url.pathname}${url.search}${url.hash}`;
+  }
+</script>
+
+<style>
+  .lang__list {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .lang__item {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: var(--sp-1) var(--sp-3);
+    border-radius: var(--radius-pill);
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--c-forest-700);
+    text-decoration: none;
+  }
+
+  a.lang__item:hover {
+    background: var(--c-lilac-100);
+  }
+
+  .lang__item--current {
+    background: var(--c-forest-700);
+    color: var(--c-white);
+  }
+</style>

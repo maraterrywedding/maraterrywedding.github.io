@@ -1,0 +1,616 @@
+---
+import en from '@/i18n/en.json';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { EVENT } from '@/data/event';
+import { formatDate, formatShortDate } from '@/lib/format';
+import { DELETE_BY } from '@/data/privacy';
+import { createHash } from 'node:crypto';
+import { normalizeInviteCode } from '@/lib/rsvp/invite';
+import { localizedPath } from '@/lib/paths';
+import { PRIVACY_PATH } from '@/lib/nav';
+import {
+  ALLERGENS,
+  CARPOOL_REGIONS,
+  COMMON_ALLERGENS,
+  DIETS,
+  HOTEL_STATUS,
+  LIMITS,
+  PHONE_COUNTRIES,
+  TRAVEL_MODES,
+  YES_NO_UNSURE,
+} from '@/lib/rsvp/model';
+
+interface Props {
+  lang: Locale;
+  /** Set in edit mode; the form then updates rather than creating. */
+  token?: string;
+  readOnly?: boolean;
+}
+
+const { lang, token, readOnly = false } = Astro.props;
+
+// Every `rsvp.*` string, handed to the controller in one go. Deriving the list
+// from the reference dictionary means a new key cannot be forgotten here.
+const messages = Object.fromEntries(
+  Object.keys(en)
+    .filter((key) => key.startsWith('rsvp.'))
+    .map((key) => [key, t(lang, key)]),
+);
+
+// The entry gate only exists when a code is actually printed on the
+// invitations. It is off, so the form is rendered open — no flash of an empty
+// page while JavaScript decides.
+const gateEnabled = Boolean(EVENT.rsvp.inviteCode);
+const inviteCodeHash = gateEnabled
+  ? // Hashed at build time so the code itself never appears in the page source.
+    createHash('sha256').update(normalizeInviteCode(EVENT.rsvp.inviteCode!)).digest('hex')
+  : '';
+
+const eventDate = formatDate(EVENT.ceremony, lang);
+const nightLabels = ['rsvp.night.before', 'rsvp.night.wedding', 'rsvp.night.after'] as const;
+const extraAllergens = ALLERGENS.filter((a) => !COMMON_ALLERGENS.includes(a));
+
+const regionLabel = (region: string) =>
+  region === 'other'
+    ? t(lang, 'rsvp.region.other')
+    : // Place names are the same in every language.
+      { hannover: 'Hannover', hameln: 'Hameln', bielefeld: 'Bielefeld', goettingen: 'Göttingen', kassel: 'Kassel', hamburg: 'Hamburg', berlin: 'Berlin' }[region] ?? region;
+---
+
+{/* ---------- Invitation code gate (only when a code is printed) ---------- */}
+<div class="gate" data-panel="gate" data-code-hash={inviteCodeHash} hidden={!gateEnabled}>
+  <div class="card gate__card">
+    <h2 class="gate__heading">{t(lang, 'rsvp.gate.heading')}</h2>
+    <p class="muted">{t(lang, 'rsvp.gate.body')}</p>
+
+    <div class="field">
+      <label class="field__label" for="inviteCode">{t(lang, 'rsvp.gate.label')}</label>
+      <input
+        class="input gate__input"
+        id="inviteCode"
+        type="text"
+        inputmode="text"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        data-gate-input
+      />
+      <p class="field__error" data-gate-error></p>
+    </div>
+
+    <p>
+      <button class="button" type="button" data-gate-submit>{t(lang, 'rsvp.gate.submit')}</button>
+    </p>
+
+    <p class="gate__lost muted">
+      {t(lang, 'rsvp.gate.lost')}
+      {EVENT.contact.email && <a href={`mailto:${EVENT.contact.email}`}>{EVENT.contact.email}</a>}
+    </p>
+  </div>
+</div>
+
+<div data-panel="form" hidden={gateEnabled}>
+  <p class="notice-box gate__flagged" data-code-flagged hidden>{t(lang, 'rsvp.gate.letThrough')}</p>
+
+  <form
+    class="wizard"
+    data-rsvp
+    novalidate
+    data-endpoint={EVENT.rsvp.endpoint}
+    data-token={token}
+    data-locale={lang}
+    data-readonly={readOnly ? 'true' : 'false'}
+    data-nights={JSON.stringify(EVENT.hotelNights)}
+    data-messages={JSON.stringify(messages)}
+  >
+    <div data-wizard-top></div>
+
+    <div class="wizard__progress">
+      <span class="wizard__bar"><span class="wizard__fill" data-progress-fill style="width:0%"></span></span>
+      <span class="wizard__count" data-progress-count></span>
+    </div>
+
+    <p class="error-summary" data-error-summary role="alert" aria-live="assertive" hidden></p>
+
+    {/* Answers survive a language switch — they are kept in session storage and
+        restored on load — but a reload mid-form is still disorienting, so it is
+        worth saying so plainly. */}
+    <p class="lang-note">{t(lang, 'rsvp.langNote')}</p>
+
+    {/* Bots fill this in; people never see it. */}
+    <div class="hp" aria-hidden="true">
+      <label for="hp">Leave this empty</label>
+      <input id="hp" name="hp" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    {/* ---------- Attendance ---------- */}
+    <section class="wizard__step" data-step="attendance">
+      <fieldset class="choices">
+        <legend class="wizard__heading">{t(lang, 'rsvp.attendance.legend')}</legend>
+
+        {
+          (['yes', 'maybe', 'no'] as const).map((value) => (
+            <label class="choice">
+              <input type="radio" name="status" value={value} />
+              <span class="choice__mark" aria-hidden="true">✓</span>
+              <span>
+                <span class="choice__title">{t(lang, `rsvp.attendance.${value}`)}</span>
+                <span class="choice__sub">{t(lang, `rsvp.attendance.${value}Sub`)}</span>
+              </span>
+            </label>
+          ))
+        }
+      </fieldset>
+      <p class="field__error" data-error-for="status"></p>
+    </section>
+
+    {/* ---------- Contact ---------- */}
+    <section class="wizard__step" data-step="contact" hidden>
+      <h2 class="wizard__heading">{t(lang, 'rsvp.contact.heading')}</h2>
+      <p class="wizard__intro">{t(lang, 'rsvp.contact.intro')}</p>
+
+      <div class="wizard__body">
+        <div class="field">
+          <label class="field__label" for="leadFirstName">{t(lang, 'rsvp.field.firstName')}</label>
+          <input class="input" id="leadFirstName" name="leadFirstName" type="text" autocomplete="given-name" />
+          <p class="field__error" data-error-for="leadFirstName"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="leadLastName">{t(lang, 'rsvp.field.lastName')}</label>
+          <input class="input" id="leadLastName" name="leadLastName" type="text" autocomplete="family-name" />
+          <p class="field__error" data-error-for="leadLastName"></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="email">{t(lang, 'rsvp.field.email')}</label>
+          <input class="input" id="email" name="email" type="email" inputmode="email" autocomplete="email" />
+          <span class="field__hint">{t(lang, 'rsvp.field.emailHint')}</span>
+          <p class="field__error" data-error-for="email"></p>
+        </div>
+
+        <div class="field" data-show-when="status=yes">
+          <label class="field__label" for="phone">{t(lang, 'rsvp.field.phone')}</label>
+          <div class="phone">
+            <select class="input" id="phoneDialCode" name="phoneDialCode" aria-label="Country code">
+              {PHONE_COUNTRIES.map((code) => <option value={code}>{code}</option>)}
+            </select>
+            <input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" />
+          </div>
+          <label class="check">
+            <input type="checkbox" name="phoneIsWhatsapp" />
+            <span class="check__text">{t(lang, 'rsvp.field.whatsapp')}</span>
+          </label>
+          <p class="field__error" data-error-for="phone"></p>
+        </div>
+
+        <div class="field" data-show-when="status=maybe" hidden>
+          <label class="field__label" for="expectedPartySize">
+            {t(lang, 'rsvp.field.expectedPartySize')}
+          </label>
+          <div class="stepper" data-stepper>
+            <button class="stepper__button" type="button" data-stepper-step="-1" aria-label="−">−</button>
+            <span class="stepper__value" data-stepper-value aria-hidden="true">2</span>
+            <input id="expectedPartySize" name="expectedPartySize" type="number" min="1" max={LIMITS.maxParty} value="2" />
+            <button class="stepper__button" type="button" data-stepper-step="1" aria-label="+">+</button>
+          </div>
+          <span class="field__hint">{t(lang, 'rsvp.field.expectedPartySizeHint')}</span>
+          <p class="field__error" data-error-for="expectedPartySize"></p>
+        </div>
+      </div>
+    </section>
+
+    {/* ---------- Guests ---------- */}
+    <section class="wizard__step" data-step="guests" hidden>
+      <h2 class="wizard__heading">{t(lang, 'rsvp.guests.heading')}</h2>
+      <p class="wizard__intro">{t(lang, 'rsvp.guests.intro')}</p>
+
+      <div class="wizard__body">
+        <p class="field__error" data-error-for="attendees"></p>
+        <ul class="attendees" data-attendees></ul>
+
+        <div class="attendee__addRow">
+          <button class="button button--secondary" type="button" data-attendee-add>
+            + {t(lang, 'rsvp.guests.add')}
+          </button>
+        </div>
+
+        <p class="notice-box" data-attendee-max hidden>
+          {t(lang, 'rsvp.guests.max', { n: LIMITS.maxParty })}
+        </p>
+      </div>
+    </section>
+
+    {/* ---------- Staying over ---------- */}
+    <section class="wizard__step" data-step="stay" hidden>
+      <h2 class="wizard__heading">{t(lang, 'rsvp.stay.heading')}</h2>
+      <p class="wizard__intro">{t(lang, 'rsvp.stay.intro')}</p>
+
+      <div class="wizard__body">
+        <fieldset class="fieldset">
+          <legend class="fieldset__legend">{t(lang, 'rsvp.field.eveningParty')}</legend>
+          <div class="chips">
+            {
+              YES_NO_UNSURE.map((value) => (
+                <label class="chip">
+                  <input type="radio" name="eveningParty" value={value} />
+                  <span>{t(lang, `rsvp.hotel.${value === 'unsure' ? 'undecided' : value}`)}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="field__error" data-error-for="eveningParty"></p>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend class="fieldset__legend">{t(lang, 'rsvp.field.hotelStatus')}</legend>
+          <div class="chips">
+            {
+              HOTEL_STATUS.map((value) => (
+                <label class="chip">
+                  <input type="radio" name="hotelStatus" value={value} />
+                  <span>{t(lang, `rsvp.hotel.${value}`)}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="field__error" data-error-for="hotelStatus"></p>
+        </fieldset>
+
+        <div data-show-when="hotelStatus=yes" hidden>
+          <fieldset class="fieldset">
+            <legend class="fieldset__legend">{t(lang, 'rsvp.field.nights')}</legend>
+            {
+              EVENT.hotelNights.map((night, i) => (
+                <label class="check check--boxed">
+                  <input type="checkbox" name="nights" value={night} />
+                  <span class="check__text">
+                    <strong>{formatShortDate(night, lang)}</strong>
+                    <span class="check__sub">{t(lang, nightLabels[i]!)}</span>
+                  </span>
+                </label>
+              ))
+            }
+            <p class="field__error" data-error-for="nights"></p>
+          </fieldset>
+
+          <div class="field">
+            <label class="field__label" for="roomsRequested">{t(lang, 'rsvp.field.rooms')}</label>
+            <div class="stepper" data-stepper>
+              <button class="stepper__button" type="button" data-stepper-step="-1" aria-label="−">−</button>
+              <span class="stepper__value" data-stepper-value aria-hidden="true">1</span>
+              <input id="roomsRequested" name="roomsRequested" type="number" min="1" max={LIMITS.maxRooms} value="1" />
+              <button class="stepper__button" type="button" data-stepper-step="1" aria-label="+">+</button>
+            </div>
+            <p class="field__error" data-error-for="roomsRequested"></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="cots">{t(lang, 'rsvp.field.cots')}</label>
+            <div class="stepper" data-stepper>
+              <button class="stepper__button" type="button" data-stepper-step="-1" aria-label="−">−</button>
+              <span class="stepper__value" data-stepper-value aria-hidden="true">0</span>
+              <input id="cots" name="cots" type="number" min="0" max={LIMITS.maxCots} value="0" />
+              <button class="stepper__button" type="button" data-stepper-step="1" aria-label="+">+</button>
+            </div>
+          </div>
+
+          <p class="notice-box">{t(lang, 'rsvp.stay.note')}</p>
+        </div>
+      </div>
+    </section>
+
+    {/* ---------- Travel ---------- */}
+    <section class="wizard__step" data-step="travel" hidden>
+      <h2 class="wizard__heading">{t(lang, 'rsvp.travel.heading')}</h2>
+      <p class="wizard__intro">{t(lang, 'rsvp.travel.intro')}</p>
+
+      <div class="wizard__body">
+        <fieldset class="fieldset">
+          <legend class="fieldset__legend">{t(lang, 'rsvp.field.travelMode')}</legend>
+          <div class="chips">
+            {
+              TRAVEL_MODES.map((value) => (
+                <label class="chip">
+                  <input type="radio" name="travelMode" value={value} />
+                  <span>{t(lang, `rsvp.travelMode.${value}`)}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="field__error" data-error-for="travelMode"></p>
+        </fieldset>
+
+        <div class="field" data-show-when="travelMode=own_car|rental_car" hidden>
+          <label class="field__label" for="carpoolOfferSeats">{t(lang, 'rsvp.field.carpoolSeats')}</label>
+          <div class="stepper" data-stepper>
+            <button class="stepper__button" type="button" data-stepper-step="-1" aria-label="−">−</button>
+            <span class="stepper__value" data-stepper-value aria-hidden="true">0</span>
+            <input id="carpoolOfferSeats" name="carpoolOfferSeats" type="number" min="0" max={LIMITS.maxCarpoolSeats} value="0" />
+            <button class="stepper__button" type="button" data-stepper-step="1" aria-label="+">+</button>
+          </div>
+          <span class="field__hint">{t(lang, 'rsvp.field.carpoolSeatsHint')}</span>
+        </div>
+
+        <div class="field" data-show-when="travelMode=carpool" hidden>
+          <label class="field__label" for="carpoolNeedFrom">{t(lang, 'rsvp.field.carpoolFrom')}</label>
+          <select class="input" id="carpoolNeedFrom" name="carpoolNeedFrom">
+            <option value="">—</option>
+            {CARPOOL_REGIONS.map((region) => <option value={region}>{regionLabel(region)}</option>)}
+          </select>
+          <p class="field__error" data-error-for="carpoolNeedFrom"></p>
+        </div>
+
+        <div data-show-when="travelMode=own_car|rental_car|carpool" hidden>
+          <label class="check check--boxed">
+            <input type="checkbox" name="carpoolShareConsent" />
+            <span class="check__text">
+              {t(lang, 'rsvp.field.carpoolConsent')}
+              <span class="check__sub">{t(lang, 'rsvp.field.carpoolConsentSub')}</span>
+            </span>
+          </label>
+          <p class="field__error" data-error-for="carpoolShareConsent"></p>
+        </div>
+      </div>
+    </section>
+
+    {/* ---------- Extras and consent ---------- */}
+    <section class="wizard__step" data-step="extras" hidden>
+      <h2 class="wizard__heading">{t(lang, 'rsvp.extras.heading')}</h2>
+      <p class="wizard__intro">{t(lang, 'rsvp.extras.intro')}</p>
+
+      <div class="wizard__body">
+        <fieldset class="fieldset" data-show-when="status=yes">
+          <legend class="fieldset__legend">
+            {t(lang, 'rsvp.field.songs')} <span class="field__optional">({t(lang, 'rsvp.field.optional')})</span>
+          </legend>
+          <div data-songs>
+            <div class="phone" data-song>
+              <input class="input" data-field="songTitle" type="text" placeholder={t(lang, 'rsvp.field.songTitle')} aria-label={t(lang, 'rsvp.field.songTitle')} />
+              <input class="input" data-field="songArtist" type="text" placeholder={t(lang, 'rsvp.field.songArtist')} aria-label={t(lang, 'rsvp.field.songArtist')} />
+            </div>
+          </div>
+          <p>
+            <button class="button button--quiet" type="button" data-song-add>+ {t(lang, 'rsvp.field.addSong')}</button>
+          </p>
+        </fieldset>
+
+        <div class="field">
+          <label class="field__label" for="message">
+            {t(lang, 'rsvp.field.message')} <span class="field__optional">({t(lang, 'rsvp.field.optional')})</span>
+          </label>
+          <textarea class="input" id="message" name="message" maxlength={LIMITS.maxMessage}></textarea>
+          <p class="field__error" data-error-for="message"></p>
+        </div>
+
+        {/* Consent is set apart rather than tucked in with the optional fields.
+            It is the one thing on this screen a guest must actively agree to,
+            and it should read as a decision, not a formality. */}
+        <section class="consent">
+          <h3 class="consent__heading">
+            {t(lang, 'rsvp.consent.heading')}
+            <span class="consent__required">{t(lang, 'rsvp.consent.required')}</span>
+          </h3>
+          <p class="consent__intro">
+            {t(lang, 'rsvp.consent.intro', { date: formatDate(DELETE_BY, lang) })}
+          </p>
+
+          <label class="check check--boxed">
+            <input type="checkbox" name="consentPrivacy" />
+            <span class="check__text">{t(lang, 'rsvp.field.consentPrivacy')}</span>
+          </label>
+          <p class="field__error" data-error-for="consentPrivacy"></p>
+
+          <div data-health-consent hidden>
+            <label class="check check--boxed">
+              <input type="checkbox" name="consentHealthData" />
+              <span class="check__text">
+                {t(lang, 'rsvp.field.consentHealth')}
+                <span class="check__sub">{t(lang, 'rsvp.field.consentSub')}</span>
+              </span>
+            </label>
+            <p class="field__error" data-error-for="consentHealthData"></p>
+          </div>
+
+          <p class="field__hint">
+            <a href={localizedPath(lang, PRIVACY_PATH)}>{t(lang, 'rsvp.extras.privacyLink')}</a>
+          </p>
+        </section>
+      </div>
+    </section>
+
+    {/* ---------- Navigation ---------- */}
+    <div class="wizard__nav">
+      <button class="button button--secondary" type="button" data-back hidden>
+        {t(lang, 'rsvp.nav.back')}
+      </button>
+      <button class="button" type="button" data-next>{t(lang, 'rsvp.nav.continue')}</button>
+      <button class="button" type="submit" data-submit hidden>
+        {token ? t(lang, 'rsvp.nav.save') : t(lang, 'rsvp.nav.send')}
+      </button>
+      <span class="wizard__running" data-attendee-count></span>
+    </div>
+
+    {/* Templates live INSIDE the form. The controller scopes its queries to the
+        form element, so a template outside it is invisible to the code that
+        clones it — and the repeater silently renders nothing. Template content
+        is inert, so this has no effect on submission. */}
+
+    {/* ---------- Attendee card template ---------- */}
+    <template data-attendee-template>
+    <li class="attendee" data-attendee>
+      <div class="attendee__head">
+        <span class="attendee__index" data-attendee-index></span>
+        <button class="attendee__remove" type="button" data-attendee-remove>
+          {t(lang, 'rsvp.guests.remove')}
+        </button>
+      </div>
+
+      <div class="attendee__body">
+        {/* The input is nested INSIDE the label rather than linked by for/id.
+            Attendee cards are cloned, so any id here would be duplicated across
+            every card and the association would break — silently, and only for
+            screen-reader users. Nesting needs no id at all. */}
+        <div class="field">
+          <label class="field__label field__label--wrap">
+            <span>{t(lang, 'rsvp.field.fullName')}</span>
+            <input class="input" data-field="fullName" type="text" autocomplete="name" />
+          </label>
+          <p class="field__error" data-card-error-for="fullName"></p>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" data-field="isChild" />
+          <span class="check__text">{t(lang, 'rsvp.field.isChild')}</span>
+        </label>
+
+        <div data-card-reveal="child" hidden>
+          <div class="field">
+            {/* A <span>, not a <label>: the stepper's input carries an
+                aria-label instead. An orphan <label> pointing at nothing is
+                worse than no label at all. */}
+            <span class="field__label">{t(lang, 'rsvp.field.age', { date: eventDate })}</span>
+            <div class="stepper" data-stepper>
+              <button class="stepper__button" type="button" data-stepper-step="-1" aria-label="−">−</button>
+              {/* Starts empty, not at zero. A default of 0 is a *valid* answer,
+                  so a distracted parent could submit "0 years old" for a
+                  seven-year-old and nothing would flag it. Requiring an
+                  explicit choice costs one tap and protects the catering
+                  numbers. */}
+              <span class="stepper__value" data-stepper-value aria-hidden="true">—</span>
+              <input
+                data-field="ageAtEvent"
+                type="number"
+                min="0"
+                max={LIMITS.maxChildAge}
+                value=""
+                aria-label={t(lang, 'rsvp.field.age', { date: eventDate })}
+              />
+              <button class="stepper__button" type="button" data-stepper-step="1" aria-label="+">+</button>
+            </div>
+            <span class="field__hint">{t(lang, 'rsvp.field.ageHint')}</span>
+            <p class="field__error" data-card-error-for="ageAtEvent"></p>
+          </div>
+
+          <label class="check" data-card-reveal="highchair" hidden>
+            <input type="checkbox" data-field="needsHighchair" />
+            <span class="check__text">{t(lang, 'rsvp.field.highchair')}</span>
+          </label>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend class="fieldset__legend">{t(lang, 'rsvp.field.diet')}</legend>
+          <div class="chips">
+            {
+              DIETS.map((diet) => (
+                <label class="chip">
+                  <input type="radio" data-field="diet" value={diet} />
+                  <span>{t(lang, `rsvp.diet.${diet}`)}</span>
+                </label>
+              ))
+            }
+          </div>
+          <p class="field__error" data-card-error-for="diet"></p>
+        </fieldset>
+
+        <label class="check" data-card-reveal="lactose">
+          <input type="checkbox" data-field="lactoseFree" />
+          <span class="check__text">{t(lang, 'rsvp.field.lactoseFree')}</span>
+        </label>
+
+        <label class="check">
+          <input type="checkbox" data-field="hasRestrictions" />
+          <span class="check__text">{t(lang, 'rsvp.field.hasRestrictions')}</span>
+        </label>
+
+        <div class="attendee__reveal" data-card-reveal="restrictions" hidden>
+          <fieldset class="fieldset">
+            <legend class="fieldset__legend">{t(lang, 'rsvp.field.allergens')}</legend>
+            <div class="chips">
+              {
+                COMMON_ALLERGENS.map((allergen) => (
+                  <label class="chip">
+                    <input type="checkbox" data-field="allergens" value={allergen} />
+                    <span>{t(lang, `rsvp.allergen.${allergen}`)}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <details>
+              <summary class="field__hint">{t(lang, 'rsvp.guests.showAllAllergens')}</summary>
+              <div class="chips" style="margin-top:0.5rem">
+                {
+                  extraAllergens.map((allergen) => (
+                    <label class="chip">
+                      <input type="checkbox" data-field="allergens" value={allergen} />
+                      <span>{t(lang, `rsvp.allergen.${allergen}`)}</span>
+                    </label>
+                  ))
+                }
+              </div>
+            </details>
+            <p class="field__error" data-card-error-for="allergens"></p>
+          </fieldset>
+
+          <div class="field">
+            <label class="field__label field__label--wrap">
+              <span>{t(lang, 'rsvp.field.allergenOther')}</span>
+              <input class="input" data-field="allergenOther" type="text" maxlength={LIMITS.maxAllergenOther} />
+            </label>
+            <p class="field__error" data-card-error-for="allergenOther"></p>
+          </div>
+        </div>
+      </div>
+    </li>
+    </template>
+
+    <template data-song-template>
+      <div class="phone" data-song style="margin-top:0.5rem">
+        <input class="input" data-field="songTitle" type="text" placeholder={t(lang, 'rsvp.field.songTitle')} aria-label={t(lang, 'rsvp.field.songTitle')} />
+        <input class="input" data-field="songArtist" type="text" placeholder={t(lang, 'rsvp.field.songArtist')} aria-label={t(lang, 'rsvp.field.songArtist')} />
+      </div>
+    </template>
+  </form>
+</div>
+
+{/* ---------- Success ---------- */}
+<div data-panel="success" hidden>
+  <div class="stack-lg">
+    <h2 data-success-heading></h2>
+    <p class="lead" data-success-body hidden></p>
+    <div class="summary" data-success-summary hidden></div>
+    <p class="notice-box" data-success-duplicate hidden>{t(lang, 'rsvp.success.duplicate')}</p>
+
+    <div class="party-code" data-party-code hidden>
+      <p class="party-code__label">{t(lang, 'rsvp.success.partyCodeLabel')}</p>
+      <p class="party-code__value" data-party-code-value></p>
+      <p class="party-code__hint">{t(lang, 'rsvp.success.partyCodeHint')}</p>
+    </div>
+
+    <p class="muted" data-success-emailed></p>
+    <p class="muted">
+      {t(lang, 'rsvp.success.changeUntil', { date: formatDate(EVENT.rsvp.hardLock, lang) })}
+    </p>
+    <p>
+      <a class="button button--secondary" data-success-edit href="#">{t(lang, 'rsvp.success.edit')}</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  import { initRsvpForm } from '@/lib/rsvp/form';
+
+  const form = document.querySelector<HTMLFormElement>('[data-rsvp]');
+  if (form) {
+    initRsvpForm(form, {
+      endpoint: form.dataset.endpoint ?? '',
+      codeHash: document.querySelector<HTMLElement>('[data-panel="gate"]')?.dataset.codeHash ?? '',
+      hotelNights: JSON.parse(form.dataset.nights ?? '[]'),
+      messages: JSON.parse(form.dataset.messages ?? '{}'),
+      token: form.dataset.token || undefined,
+      locale: form.dataset.locale ?? 'en',
+      readOnly: form.dataset.readonly === 'true',
+    });
+  }
+</script>

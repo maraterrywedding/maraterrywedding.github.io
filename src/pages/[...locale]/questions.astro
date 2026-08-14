@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import FaqList from '@/components/FaqList.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { EVENT } from '@/data/event';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+// `draft` questions stay hidden. An answer that is not ready yet is better as
+// nothing than as a half-sentence a guest then acts on.
+const entries = (await getCollection('faq', ({ data }) => data.status !== 'draft')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Base lang={lang} path="/questions" title={t(lang, 'faq.title')}>
+  <PageHeader lang={lang} title={t(lang, 'faq.title')} intro={t(lang, 'faq.intro')} />
+
+  <section class="section">
+    <div class="container questions">
+      <FaqList lang={lang} entries={entries} />
+
+      <div class="card ask">
+        <h2>{t(lang, 'faq.askUsTitle')}</h2>
+        <p class="muted">{t(lang, 'faq.askUsBody')}</p>
+        {
+          EVENT.contact.email && (
+            <p>
+              <a class="button button--secondary" href={`mailto:${EVENT.contact.email}`}>
+                {t(lang, 'footer.contact')}
+              </a>
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .questions {
+    display: grid;
+    gap: var(--sp-7);
+    align-items: start;
+  }
+
+  @media (min-width: 62rem) {
+    .questions {
+      grid-template-columns: 1fr 20rem;
+      gap: var(--sp-8);
+    }
+  }
+
+  .ask {
+    background: var(--c-bg-tint);
+    border-color: var(--c-lilac-200);
+  }
+
+  .ask > * + * {
+    margin-block-start: var(--sp-3);
+  }
+</style>

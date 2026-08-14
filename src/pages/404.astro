@@ -1,0 +1,28 @@
+---
+import Base from '@/layouts/Base.astro';
+import { DEFAULT_LOCALE } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+
+// GitHub Pages serves a single 404.html for every unmatched path, so it cannot
+// know the visitor's language. English it is.
+const lang = DEFAULT_LOCALE;
+---
+
+<Base lang={lang} path="/" title={t(lang, 'notfound.title')}>
+  <section class="section">
+    <div class="container prose notfound">
+      <h1>{t(lang, 'notfound.title')}</h1>
+      <p class="lead">{t(lang, 'notfound.body')}</p>
+      <p>
+        <a class="button" href={localizedPath(lang, '/')}>{t(lang, 'common.backHome')}</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notfound {
+    padding-block: var(--sp-7);
+  }
+</style>

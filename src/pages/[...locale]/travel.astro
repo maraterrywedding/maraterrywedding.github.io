@@ -1,0 +1,257 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import LocalizedText from '@/components/LocalizedText.astro';
+import Photo from '@/components/Photo.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { pickLocalized, t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+import { RSVP_PATH } from '@/lib/nav';
+import { EVENT, directionsUrl } from '@/data/event';
+import { NEAREST_STATION, TRAVEL_ROUTES, type TravelMode } from '@/data/travel';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+const MODE_ICONS: Record<TravelMode, string> = {
+  // Simple glyph paths, drawn at 24×24.
+  air: 'M2 14l20-7-7 20-3-8-8-3z',
+  rail: 'M6 3h12v11a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4zM8 21l2-3M16 21l-2-3',
+  car: 'M3 13l2-6h14l2 6v5h-3M6 18H3v-5M7 18a2 2 0 1 0 4 0M15 18a2 2 0 1 0 4 0',
+  taxi: 'M9 3h6v3H9zM3 13l2-6h14l2 6v5h-3M6 18H3v-5',
+};
+---
+
+<Base lang={lang} path="/travel" title={t(lang, 'travel.title')}>
+  <PageHeader lang={lang} title={t(lang, 'travel.title')} intro={t(lang, 'travel.intro')} />
+
+  <section class="section">
+    <div class="container">
+      <div class="where">
+        <div class="where__text stack">
+          <h2>{t(lang, 'travel.addressTitle')}</h2>
+          <address class="where__address">
+            <strong>{EVENT.venue.name}</strong><br />
+            {EVENT.venue.street}<br />
+            {EVENT.venue.postcode} {EVENT.venue.city}<br />
+            {EVENT.venue.country}
+          </address>
+
+          <p>
+            <a class="button" href={directionsUrl()} target="_blank" rel="noopener noreferrer">
+              {t(lang, 'travel.directions')}
+              <span class="visually-hidden">({t(lang, 'a11y.externalLink')})</span>
+            </a>
+          </p>
+
+          <p class="where__station">
+            <strong>{t(lang, 'travel.stationTitle')}:</strong>{' '}
+            {
+              t(lang, 'travel.stationBody', {
+                name: NEAREST_STATION.name,
+                line: NEAREST_STATION.line,
+                km: NEAREST_STATION.kmToVenue,
+              })
+            }
+          </p>
+        </div>
+
+        <figure class="where__figure">
+          <Photo
+            name="venueEntrance"
+            lang={lang}
+            widths={[400, 800, 1200]}
+            sizes="(min-width: 48rem) 28rem, 100vw"
+            ratio="4/3"
+            class="where__image"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="container stack-lg">
+      <ul class="routes">
+        {
+          TRAVEL_ROUTES.map((route) => {
+            const { value: from } = pickLocalized(route.from, lang);
+            return (
+              <li class="route">
+                <div class="route__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d={MODE_ICONS[route.mode]}
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+
+                <div class="route__body">
+                  <p class="route__kicker">{t(lang, `travel.mode.${route.mode}`)}</p>
+                  <h2 class="route__from">{from}</h2>
+                  {route.duration && (
+                    <LocalizedText
+                      value={route.duration}
+                      lang={lang}
+                      as="p"
+                      class="route__duration"
+                      note={false}
+                    />
+                  )}
+                  <LocalizedText value={route.body} lang={lang} as="p" class="route__text" />
+                  {route.link && (
+                    <p>
+                      <a href={route.link.href} target="_blank" rel="noopener noreferrer">
+                        {pickLocalized(route.link.label, lang).value}
+                        <span class="visually-hidden">({t(lang, 'a11y.externalLink')})</span>
+                      </a>
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <p class="notice">{t(lang, 'travel.verifyNote')}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="card carpool">
+        <h2>{t(lang, 'travel.carpoolTitle')}</h2>
+        <p class="muted">{t(lang, 'travel.carpoolBody')}</p>
+        <p>
+          <a class="button button--secondary" href={localizedPath(lang, RSVP_PATH)}>
+            {t(lang, 'nav.rsvp')}
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .where {
+    display: grid;
+    gap: var(--sp-6);
+    align-items: center;
+  }
+
+  @media (min-width: 48rem) {
+    .where {
+      grid-template-columns: 1fr 28rem;
+    }
+  }
+
+  .where__address {
+    font-style: normal;
+    line-height: 1.8;
+  }
+
+  .where__station {
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--c-border);
+    color: var(--c-text-muted);
+  }
+
+  .where__figure {
+    margin: 0;
+  }
+
+  .where :global(.where__image) {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+  }
+
+  .routes {
+    display: grid;
+    gap: var(--sp-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 52rem) {
+    .routes {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .route {
+    display: flex;
+    gap: var(--sp-4);
+  }
+
+  .route__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--c-white);
+    border: 1px solid var(--c-lilac-200);
+    color: var(--c-forest-600);
+  }
+
+  .route__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .route__kicker {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-lilac-700);
+  }
+
+  .route__from {
+    font-size: var(--step-1);
+    margin-block-start: var(--sp-1);
+  }
+
+  .route__duration {
+    margin-block-start: var(--sp-1);
+    font-weight: 600;
+    color: var(--c-forest-700);
+  }
+
+  .route__text {
+    margin-block-start: var(--sp-3);
+    color: var(--c-text-muted);
+  }
+
+  .route__body > p:last-child:not(.route__text) {
+    margin-block-start: var(--sp-3);
+  }
+
+  .notice {
+    max-width: var(--measure);
+    padding: var(--sp-4);
+    border-inline-start: 3px solid var(--c-lilac-400);
+    background: var(--c-white);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .carpool {
+    max-width: var(--measure);
+  }
+
+  .carpool > * + * {
+    margin-block-start: var(--sp-4);
+  }
+</style>

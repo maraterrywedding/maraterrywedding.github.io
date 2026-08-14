@@ -1,0 +1,194 @@
+[
+  {
+    "id": "what-time-arrive",
+    "order": 10,
+    "category": "basics",
+    "status": "provisional",
+    "question": {
+      "en": "What time should I actually arrive?",
+      "de": "Wann sollte ich wirklich da sein?",
+      "pt": "A que horas eu devo chegar de verdade?"
+    },
+    "answer": {
+      "en": "From 10:30, so there is time for a welcome drink before the ceremony starts at 11:00. If you are driving a long way, give yourself a buffer — the last stretch is a country road.",
+      "de": "Ab 10:30 Uhr, dann bleibt Zeit für ein Empfangsgetränk, bevor die Trauung um 11:00 Uhr beginnt. Wer weit fährt, sollte etwas Puffer einplanen — das letzte Stück ist Landstraße.",
+      "pt": "A partir das 10:30, assim dá tempo de tomar um drinque de boas-vindas antes de a cerimônia começar às 11:00. Quem vem de longe de carro, reserve uma folga — o último trecho é estrada de interior."
+    }
+  },
+  {
+    "id": "day-of-week",
+    "order": 20,
+    "category": "basics",
+    "status": "final",
+    "question": {
+      "en": "Wait — it's on a Friday?",
+      "de": "Moment — an einem Freitag?",
+      "pt": "Peraí — é numa sexta-feira?"
+    },
+    "answer": {
+      "en": "Yes. 11 June 2027 is a Friday, so most people will need to book the day off work. We are telling you this early on purpose. Many guests turn it into a long weekend, and the Weser valley is a lovely place to do that.",
+      "de": "Ja. Der 11. Juni 2027 ist ein Freitag, ihr müsst euch also wahrscheinlich freinehmen. Deshalb sagen wir es so früh. Viele machen ein langes Wochenende daraus — und das Wesertal ist dafür wunderschön.",
+      "pt": "Sim. 11 de junho de 2027 é uma sexta-feira, então a maioria vai precisar tirar o dia de folga. Estamos avisando cedo de propósito. Muita gente aproveita para emendar um fim de semana longo, e o vale do Weser é lindo para isso."
+    }
+  },
+  {
+    "id": "indoors-outdoors",
+    "order": 30,
+    "category": "basics",
+    "status": "provisional",
+    "question": {
+      "en": "Is it indoors or outdoors?",
+      "de": "Findet alles drinnen oder draußen statt?",
+      "pt": "É dentro ou ao ar livre?"
+    },
+    "answer": {
+      "en": "Both. The ceremony and dinner are inside, and a good part of the afternoon is out in the garden and along the river. Plan for grass underfoot and a cooler evening by the water.",
+      "de": "Beides. Trauung und Abendessen sind drinnen, ein großer Teil des Nachmittags findet im Garten und am Fluss statt. Rechnet mit Gras unter den Füßen und einem kühleren Abend am Wasser.",
+      "pt": "Os dois. A cerimônia e o jantar são dentro, e boa parte da tarde é no jardim e à beira do rio. Contem com grama sob os pés e uma noite mais fresca perto da água."
+    }
+  },
+  {
+    "id": "parking",
+    "order": 40,
+    "category": "travel",
+    "status": "provisional",
+    "question": {
+      "en": "Is there parking?",
+      "de": "Gibt es Parkplätze?",
+      "pt": "Tem estacionamento?"
+    },
+    "answer": {
+      "en": "Yes, free parking at the venue. If you are staying the night or would rather not drive home after the party, leaving the car overnight is fine.",
+      "de": "Ja, kostenlose Parkplätze an der Location. Wer übernachtet oder nach der Party lieber nicht fährt, kann das Auto problemlos stehen lassen.",
+      "pt": "Sim, estacionamento gratuito no local. Quem for dormir por lá ou preferir não dirigir depois da festa pode deixar o carro sem problema."
+    }
+  },
+  {
+    "id": "children",
+    "order": 50,
+    "category": "kids",
+    "status": "final",
+    "question": {
+      "en": "Are children welcome?",
+      "de": "Sind Kinder willkommen?",
+      "pt": "As crianças podem ir?"
+    },
+    "answer": {
+      "en": "Very. There are garden games in the afternoon and a deliberate quiet hour at 17:00 so little ones can nap. Tell us their ages in your RSVP and we will make sure there is food they will actually eat, plus high chairs and cots where needed.",
+      "de": "Sehr. Am Nachmittag gibt es Gartenspiele, und um 17:00 Uhr ist bewusst eine Ruhestunde eingeplant, damit die Kleinen schlafen können. Sagt uns in der Zusage ihr Alter, dann sorgen wir für Essen, das sie auch wirklich mögen, und für Hochstühle und Kinderbetten.",
+      "pt": "Muito. Tem jogos no jardim à tarde e uma hora de sossego às 17:00, de propósito, para as crianças dormirem. Digam a idade delas na confirmação de presença e a gente garante comida que elas realmente vão comer, além de cadeirões e berços."
+    }
+  },
+  {
+    "id": "dietary",
+    "order": 60,
+    "category": "food",
+    "status": "final",
+    "question": {
+      "en": "I have an allergy or a special diet. Will that be a problem?",
+      "de": "Ich habe eine Allergie oder esse besonders. Ist das ein Problem?",
+      "pt": "Tenho alergia ou dieta especial. Vai ser um problema?"
+    },
+    "answer": {
+      "en": "Not at all — that is exactly what the RSVP form asks about. Tell us for each person in your group and it goes straight to the kitchen. If something changes later, use your edit link or just message us.",
+      "de": "Überhaupt nicht — genau danach fragt das Zusageformular. Gebt es für jede Person eurer Gruppe an, dann geht es direkt in die Küche. Wenn sich später etwas ändert, nutzt euren Bearbeitungslink oder schreibt uns einfach.",
+      "pt": "De jeito nenhum — é exatamente o que o formulário de confirmação pergunta. Informem para cada pessoa do grupo e isso vai direto para a cozinha. Se mudar alguma coisa depois, usem o link de edição ou é só falar com a gente."
+    }
+  },
+  {
+    "id": "when-does-it-end",
+    "order": 70,
+    "category": "basics",
+    "status": "provisional",
+    "question": {
+      "en": "When does it end?",
+      "de": "Wann ist Schluss?",
+      "pt": "Quando termina?"
+    },
+    "answer": {
+      "en": "There is a midnight snack around 23:00 and things wind down from there. Nobody will mind if you slip away earlier — it is a long day and it starts in the morning.",
+      "de": "Gegen 23:00 Uhr gibt es einen Mitternachtssnack, danach klingt der Abend aus. Es nimmt euch niemand übel, wenn ihr früher geht — es ist ein langer Tag, und er beginnt morgens.",
+      "pt": "Por volta das 23:00 tem um lanche da madrugada e a festa vai diminuindo a partir daí. Ninguém vai ligar se vocês saírem antes — é um dia longo, e começa de manhã."
+    }
+  },
+  {
+    "id": "late",
+    "order": 80,
+    "category": "basics",
+    "status": "final",
+    "question": {
+      "en": "What if I'm running late?",
+      "de": "Was, wenn ich zu spät komme?",
+      "pt": "E se eu me atrasar?"
+    },
+    "answer": {
+      "en": "Come anyway. The one moment worth hurrying for is the ceremony at 11:00 — after that the day is relaxed and you can slot in whenever you arrive.",
+      "de": "Kommt trotzdem. Der einzige Moment, für den es sich zu hetzen lohnt, ist die Trauung um 11:00 Uhr — danach ist der Tag entspannt, und ihr könnt jederzeit dazukommen.",
+      "pt": "Venham mesmo assim. O único momento que vale a pena correr é a cerimônia às 11:00 — depois disso o dia é tranquilo e vocês entram na hora que chegarem."
+    }
+  },
+  {
+    "id": "language",
+    "order": 90,
+    "category": "basics",
+    "status": "provisional",
+    "question": {
+      "en": "What language will the day be in?",
+      "de": "In welcher Sprache findet der Tag statt?",
+      "pt": "Em que idioma vai ser o dia?"
+    },
+    "answer": {
+      "en": "The civil ceremony is in German, as German law requires. Around it you will hear English, German and Portuguese all day — this is that kind of family. Nobody will be left out of a conversation.",
+      "de": "Die standesamtliche Trauung ist auf Deutsch, so schreibt es das Gesetz vor. Drumherum werdet ihr den ganzen Tag Englisch, Deutsch und Portugiesisch hören — so ist diese Familie nun mal. Niemand bleibt bei einem Gespräch außen vor.",
+      "pt": "A cerimônia civil é em alemão, como a lei exige. Em volta disso, vocês vão ouvir inglês, alemão e português o dia inteiro — a família é assim mesmo. Ninguém vai ficar de fora das conversas."
+    }
+  },
+  {
+    "id": "rsvp-deadline",
+    "order": 100,
+    "category": "basics",
+    "status": "provisional",
+    "question": {
+      "en": "When do you need my answer?",
+      "de": "Bis wann braucht ihr meine Antwort?",
+      "pt": "Até quando vocês precisam da minha resposta?"
+    },
+    "answer": {
+      "en": "As early as you can, please — we need rough numbers well in advance to hold hotel rooms. You can change your answer afterwards using the link we email you, right up until the form closes.",
+      "de": "So früh wie möglich, bitte — wir brauchen ungefähre Zahlen weit im Voraus, um Hotelzimmer zu blocken. Ihr könnt eure Antwort danach jederzeit über den Link ändern, den wir euch per E-Mail schicken, bis das Formular schließt.",
+      "pt": "O quanto antes, por favor — precisamos de números aproximados bem cedo para segurar os quartos do hotel. Vocês podem mudar a resposta depois pelo link que enviamos por e-mail, até o formulário fechar."
+    }
+  },
+  {
+    "id": "change-my-answer",
+    "order": 110,
+    "category": "basics",
+    "status": "final",
+    "question": {
+      "en": "Can I change my answer later?",
+      "de": "Kann ich meine Antwort später ändern?",
+      "pt": "Posso mudar minha resposta depois?"
+    },
+    "answer": {
+      "en": "Yes. When you send the form we email you a personal link — keep that email. It reopens your answers so you can add a person, change a meal, or cancel. If you lose it, we can send it again.",
+      "de": "Ja. Nach dem Absenden schicken wir euch per E-Mail einen persönlichen Link — hebt diese E-Mail auf. Damit öffnet ihr eure Angaben wieder, könnt jemanden hinzufügen, das Essen ändern oder absagen. Wenn ihr ihn verliert, schicken wir ihn erneut.",
+      "pt": "Pode. Quando vocês enviarem o formulário, mandamos um link pessoal por e-mail — guardem esse e-mail. Ele reabre as respostas para incluir alguém, trocar o prato ou cancelar. Se perderem, a gente reenvia."
+    }
+  },
+  {
+    "id": "gifts",
+    "order": 200,
+    "category": "gifts",
+    "status": "provisional",
+    "question": {
+      "en": "What about gifts?",
+      "de": "Und was ist mit Geschenken?",
+      "pt": "E os presentes?"
+    },
+    "answer": {
+      "en": "We are still thinking about this one and will put a proper answer here well before the day. Please do not worry about it for now — you being there is the point.",
+      "de": "Darüber denken wir noch nach und schreiben rechtzeitig vor dem Tag eine richtige Antwort hierhin. Macht euch vorerst bitte keine Gedanken — dass ihr da seid, ist die Hauptsache.",
+      "pt": "Ainda estamos pensando nisso e vamos colocar uma resposta de verdade aqui bem antes do dia. Por enquanto, não se preocupem — o que importa é vocês estarem lá."
+    }
+  }
+]

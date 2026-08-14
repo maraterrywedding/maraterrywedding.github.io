@@ -1,0 +1,95 @@
+/*
+ * Design tokens — light purple + darker green, warm paper.
+ *
+ * Contrast rule that governs the whole palette: lilac-500 on paper is about
+ * 3.4:1, which fails WCAG AA for body text. So lilac is FILLS, BORDERS and
+ * DECORATION; anything you have to read is forest or ink. Lilac-700 is the
+ * one purple that is safe for text.
+ *
+ * The site commits to a single light theme on purpose. A wedding invitation
+ * has one look; a dark variant of it would be a different, colder object.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ---- Lilac ---- */
+  --c-lilac-50: #f8f5fc;
+  --c-lilac-100: #efe7f7;
+  --c-lilac-200: #dccdee;
+  --c-lilac-300: #c4aee0;
+  --c-lilac-400: #a98bce;
+  --c-lilac-500: #9b7bc4;
+  --c-lilac-600: #7e5ca8;
+  --c-lilac-700: #5f4181; /* text-safe on paper — 7.4:1 */
+
+  /* ---- Forest ---- */
+  --c-forest-400: #5c8a6b;
+  --c-forest-500: #4a7a59;
+  --c-forest-600: #3e6b4f;
+  --c-forest-700: #305540;
+  --c-forest-800: #24422f;
+  --c-forest-900: #16281d;
+
+  /* ---- Neutrals ---- */
+  --c-paper: #fdfcfa;
+  --c-cream: #f7f3ed;
+  --c-ink: #22201f;
+  --c-muted: #5b5551; /* 7.1:1 on paper */
+  --c-line: #e3dcd5;
+  --c-white: #ffffff;
+
+  /* ---- Semantic ---- */
+  --c-bg: var(--c-paper);
+  --c-bg-alt: var(--c-cream);
+  --c-bg-tint: var(--c-lilac-50);
+  --c-text: var(--c-ink);
+  --c-text-muted: var(--c-muted);
+  --c-heading: var(--c-forest-800);
+  --c-accent: var(--c-lilac-600);
+  --c-accent-quiet: var(--c-lilac-200);
+  --c-border: var(--c-line);
+  --c-focus: var(--c-forest-600);
+  --c-danger: #a03232;
+  --c-danger-bg: #fdf2f2;
+
+  /* ---- Type ---- */
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
+    'Times New Roman', serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Fluid scale, mobile-first. Body never drops below 16px — anything smaller
+     makes iOS Safari zoom on focus, which wrecks the RSVP form. */
+  --step--1: clamp(0.875rem, 0.85rem + 0.12vw, 0.94rem);
+  --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.075rem);
+  --step-1: clamp(1.2rem, 1.13rem + 0.36vw, 1.42rem);
+  --step-2: clamp(1.44rem, 1.31rem + 0.66vw, 1.9rem);
+  --step-3: clamp(1.73rem, 1.5rem + 1.14vw, 2.53rem);
+  --step-4: clamp(2.07rem, 1.7rem + 1.87vw, 3.38rem);
+
+  /* ---- Space ---- */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-9: 6rem;
+
+  /* ---- Shape ---- */
+  --radius-sm: 6px;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgb(34 32 31 / 0.06), 0 1px 3px rgb(34 32 31 / 0.05);
+  --shadow: 0 2px 4px rgb(34 32 31 / 0.05), 0 8px 24px rgb(34 32 31 / 0.07);
+
+  /* Minimum comfortable tap target. Referenced, not guessed at. */
+  --tap: 48px;
+
+  --container: 64rem;
+  --measure: 38rem; /* readable line length for prose */
+}

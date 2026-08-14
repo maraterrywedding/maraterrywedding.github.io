@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import type { Locale } from '@/i18n/locales';
+import { pickLocalized } from '@/i18n/utils';
+import { PHOTOS, type PhotoKey } from '@/data/photos';
+
+interface Props {
+  name: PhotoKey;
+  lang: Locale;
+  /** Widths Astro should emit. Defaults suit a full-width block on a phone. */
+  widths?: number[];
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  class?: string;
+  /** Force a crop ratio, e.g. '16/9'. Omit to keep the image's own shape. */
+  ratio?: string;
+}
+
+const {
+  name,
+  lang,
+  widths = [400, 800, 1200, 1600],
+  sizes = '(min-width: 64rem) 60rem, 100vw',
+  loading = 'lazy',
+  class: className,
+  ratio,
+} = Astro.props;
+
+const photo = PHOTOS[name];
+const { value: alt } = pickLocalized(photo.alt, lang);
+---
+
+<Image
+  src={photo.src}
+  alt={alt}
+  widths={widths}
+  sizes={sizes}
+  loading={loading}
+  decoding={loading === 'eager' ? 'sync' : 'async'}
+  class:list={['photo', className]}
+  style={ratio ? `aspect-ratio:${ratio};object-fit:cover` : undefined}
+/>
+
+<style>
+  /* Deliberately no `height` here. The global `img { height: auto }` rule
+     already covers the default case, and declaring it again at this
+     specificity would beat any caller trying to stretch the image to fill a
+     container — which is exactly what the hero needs. */
+  .photo {
+    width: 100%;
+  }
+</style>

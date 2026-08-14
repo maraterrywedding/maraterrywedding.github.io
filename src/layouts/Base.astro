@@ -1,0 +1,81 @@
+---
+import '@/styles/global.css';
+import { LOCALES, LOCALE_TAGS, DEFAULT_LOCALE, type Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+import { EVENT } from '@/data/event';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  lang: Locale;
+  /** Page title without the site name; omit on the home page. */
+  title?: string;
+  description?: string;
+  /** Bare path (no locale, no base) — used to build the hreflang alternates. */
+  path: string;
+}
+
+const { lang, title, description, path } = Astro.props;
+
+const pageTitle = title ? `${title} · ${EVENT.couple.display}` : `${EVENT.couple.display} · ${t(lang, 'site.tagline')}`;
+const metaDescription = description ?? t(lang, 'meta.description');
+
+const site = Astro.site;
+const absolute = (locale: Locale) =>
+  site ? new URL(localizedPath(locale, path), site).href : undefined;
+---
+
+<!doctype html>
+<html lang={LOCALE_TAGS[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={metaDescription} />
+
+    {/* The couple asked for a site that is reachable by link but not listed in
+        search results. Guest data lives in the private sheet; this keeps the
+        pages themselves out of the index. */}
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+
+    <meta name="theme-color" content="#3e6b4f" />
+
+    {site && <link rel="canonical" href={absolute(lang)} />}
+    {
+      site &&
+        LOCALES.map((locale) => (
+          <link rel="alternate" hreflang={LOCALE_TAGS[locale]} href={absolute(locale)} />
+        ))
+    }
+    {site && <link rel="alternate" hreflang="x-default" href={absolute(DEFAULT_LOCALE)} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:locale" content={LOCALE_TAGS[lang].replace('-', '_')} />
+
+    <link rel="icon" href={localizedPath(DEFAULT_LOCALE, '/favicon.svg')} type="image/svg+xml" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">{t(lang, 'nav.skipToContent')}</a>
+    <Header lang={lang} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>
+
+<style is:global>
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+  }
+</style>

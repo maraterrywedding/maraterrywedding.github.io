@@ -1,0 +1,220 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import RsvpForm from '@/components/rsvp/RsvpForm.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+import { EVENT } from '@/data/event';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+/**
+ * The token arrives as `?t=…` and is read in the browser, never at build time —
+ * this is a static page. The URL is the credential, so the layout already sets
+ * `Referrer-Policy: no-referrer` site-wide and the page is `noindex`.
+ */
+---
+
+<Base lang={lang} path="/rsvp/edit" title={t(lang, 'rsvp.edit.heading')}>
+  <PageHeader lang={lang} title={t(lang, 'rsvp.edit.heading')} />
+
+  <section class="section">
+    <div class="container edit" data-edit data-endpoint={EVENT.rsvp.endpoint}>
+      <p class="muted" data-edit-loading>{t(lang, 'rsvp.edit.loading')}</p>
+
+      {/* Arriving without a token is the normal case for someone who has lost
+          their email, not an error — so this is a way back in, not a dead end.
+          It needs the code AND the address it was issued to: six characters
+          alone would be walkable by a script, and behind it sit names, phone
+          numbers and allergies. */}
+      <div class="card edit__find" data-edit-find hidden>
+        <h2>{t(lang, 'rsvp.find.heading')}</h2>
+        <p class="muted">{t(lang, 'rsvp.find.body')}</p>
+
+        <p class="notice-box notice-box--warn" data-edit-badtoken hidden>
+          {t(lang, 'rsvp.edit.notFoundBody')}
+        </p>
+
+        <div class="field">
+          <label class="field__label" for="findEmail">{t(lang, 'rsvp.field.email')}</label>
+          <input class="input" id="findEmail" type="email" inputmode="email" autocomplete="email" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="findCode">{t(lang, 'rsvp.find.code')}</label>
+          <input
+            class="input gate__input"
+            id="findCode"
+            type="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            placeholder="MT-XXXXXX"
+          />
+          <span class="field__hint">{t(lang, 'rsvp.find.codeHint')}</span>
+          <p class="field__error" data-find-error></p>
+        </div>
+
+        <p>
+          <button class="button" type="button" data-find-submit>{t(lang, 'rsvp.find.submit')}</button>
+        </p>
+
+        <p class="field__hint">
+          <a href={localizedPath(lang, '/rsvp')}>{t(lang, 'rsvp.title')}</a>
+        </p>
+      </div>
+
+      <div data-edit-form hidden>
+        <p class="notice-box edit__banner" data-edit-banner hidden></p>
+        <p class="notice-box notice-box--warn edit__readonly" data-edit-readonly hidden>
+          {t(lang, 'rsvp.edit.readOnly')}
+        </p>
+        <RsvpForm lang={lang} token="pending" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import type { RsvpPayload } from '@/lib/rsvp/model';
+
+  const root = document.querySelector<HTMLElement>('[data-edit]');
+  const form = document.querySelector<HTMLFormElement>('[data-rsvp]');
+
+  if (root && form) {
+    const loading = root.querySelector<HTMLElement>('[data-edit-loading]')!;
+    const findPanel = root.querySelector<HTMLElement>('[data-edit-find]')!;
+    const badToken = root.querySelector<HTMLElement>('[data-edit-badtoken]')!;
+    const wrapper = root.querySelector<HTMLElement>('[data-edit-form]')!;
+    const banner = root.querySelector<HTMLElement>('[data-edit-banner]')!;
+    const readOnlyNote = root.querySelector<HTMLElement>('[data-edit-readonly]')!;
+    const messages = JSON.parse(form.dataset.messages ?? '{}') as Record<string, string>;
+
+    const token = new URLSearchParams(location.search).get('t') ?? '';
+
+    /** `hadToken` distinguishes "you followed a broken link" from "you came here directly". */
+    const showFind = (hadToken: boolean) => {
+      loading.hidden = true;
+      badToken.hidden = !hadToken;
+      findPanel.hidden = false;
+    };
+
+    // --- Looking a reply up by email + party code ---
+    const findButton = root.querySelector<HTMLButtonElement>('[data-find-submit]')!;
+    const findEmail = root.querySelector<HTMLInputElement>('#findEmail')!;
+    const findCode = root.querySelector<HTMLInputElement>('#findCode')!;
+    const findError = root.querySelector<HTMLElement>('[data-find-error]')!;
+
+    const lookUp = async () => {
+      findError.textContent = '';
+      const original = findButton.textContent;
+      findButton.disabled = true;
+      findButton.textContent = messages['rsvp.find.checking'] ?? '…';
+
+      try {
+        const response = await fetch(root.dataset.endpoint!, {
+          // text/plain keeps this a CORS simple request — Apps Script cannot
+          // answer a preflight.
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'find',
+            email: findEmail.value,
+            partyCode: findCode.value,
+          }),
+        });
+        const data = await response.json();
+        if (data.ok && data.token) {
+          // Reload with the token in the URL, so the normal edit path takes
+          // over and a refresh keeps working.
+          location.search = `?t=${encodeURIComponent(data.token)}`;
+          return;
+        }
+        findError.textContent = messages['rsvp.find.notFound'] ?? '';
+      } catch {
+        findError.textContent = messages['rsvp.error.network'] ?? '';
+      } finally {
+        findButton.disabled = false;
+        findButton.textContent = original;
+      }
+    };
+
+    findButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      void lookUp();
+    });
+    for (const input of [findEmail, findCode]) {
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          void lookUp();
+        }
+      });
+    }
+
+    if (!token) {
+      showFind(false);
+    } else {
+      const url = `${root.dataset.endpoint}?action=get&t=${encodeURIComponent(token)}`;
+      fetch(url, { headers: { Accept: 'application/json' } })
+        .then((response) => (response.ok ? response.json() : Promise.reject(new Error('bad status'))))
+        .then((data) => {
+          if (!data.ok || !data.rsvp) {
+            // The link is broken, but they can still get in with their code.
+            showFind(true);
+            return;
+          }
+
+          const payload = data.rsvp.payload as RsvpPayload;
+          // The token only becomes real once the record is known to exist;
+          // until then the form would try to update a row that is not there.
+          form.dataset.token = token;
+
+          const fill = (form as unknown as { rsvpFill?: (p: Partial<RsvpPayload>) => void }).rsvpFill;
+          fill?.(payload);
+
+          // Land on the contact step rather than the attendance question —
+          // they have already answered that, and re-asking reads as a reset.
+          const goTo = (form as unknown as { rsvpShowStep?: (n: number) => void }).rsvpShowStep;
+          goTo?.(1);
+
+          const name = `${payload.leadFirstName ?? ''} ${payload.leadLastName ?? ''}`.trim();
+          if (name) {
+            banner.textContent = (messages['rsvp.edit.for'] ?? '').replace('{name}', name);
+            banner.hidden = false;
+          }
+
+          if (data.readOnly) {
+            readOnlyNote.hidden = false;
+            for (const control of form.querySelectorAll<HTMLInputElement>('input, select, textarea, button')) {
+              control.disabled = true;
+            }
+          }
+
+          loading.hidden = true;
+          wrapper.hidden = false;
+        })
+        .catch(() => showFind(true));
+    }
+  }
+</script>
+
+<style>
+  .edit__find {
+    max-width: var(--measure);
+  }
+
+  .edit__notfound > * + * {
+    margin-block-start: var(--sp-4);
+  }
+
+  .edit__banner,
+  .edit__readonly {
+    max-width: 42rem;
+    margin: 0 auto var(--sp-5);
+  }
+</style>

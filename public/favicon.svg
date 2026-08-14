@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Mara and Terry">
+  <rect width="64" height="64" rx="14" fill="#3e6b4f"/>
+  <circle cx="26" cy="36" r="13" fill="none" stroke="#dccdee" stroke-width="4"/>
+  <circle cx="39" cy="36" r="13" fill="none" stroke="#f8f5fc" stroke-width="4"/>
+</svg>

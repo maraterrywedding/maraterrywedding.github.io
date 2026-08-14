@@ -1,0 +1,81 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Timeline from '@/components/Timeline.astro';
+import Photo from '@/components/Photo.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { SCHEDULE_IS_PROVISIONAL } from '@/data/schedule';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+---
+
+<Base lang={lang} path="/schedule" title={t(lang, 'schedule.title')}>
+  <PageHeader
+    lang={lang}
+    title={t(lang, 'schedule.title')}
+    intro={t(lang, 'schedule.intro')}
+    provisional={SCHEDULE_IS_PROVISIONAL}
+  />
+
+  <section class="section">
+    <div class="container schedule">
+      <Timeline lang={lang} />
+
+      <aside class="schedule__aside">
+        <div class="card">
+          <h2 class="schedule__asideTitle">{t(lang, 'schedule.quietHourTitle')}</h2>
+          <p class="muted">{t(lang, 'schedule.quietHourBody')}</p>
+        </div>
+
+        <figure class="schedule__figure">
+          <Photo
+            name="venueSunset"
+            lang={lang}
+            widths={[400, 800]}
+            sizes="(min-width: 60rem) 22rem, 100vw"
+            ratio="4/3"
+            class="schedule__image"
+          />
+        </figure>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .schedule {
+    display: grid;
+    gap: var(--sp-7);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .schedule {
+      grid-template-columns: 1fr 22rem;
+      gap: var(--sp-8);
+    }
+  }
+
+  .schedule__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+
+  .schedule__asideTitle {
+    font-size: var(--step-1);
+    margin-block-end: var(--sp-3);
+  }
+
+  .schedule__figure {
+    margin: 0;
+  }
+
+  .schedule :global(.schedule__image) {
+    border-radius: var(--radius-lg);
+  }
+</style>

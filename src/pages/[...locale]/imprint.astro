@@ -1,0 +1,84 @@
+---
+import Base from '@/layouts/Base.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import { localeStaticPaths } from '@/lib/routing';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { localizedPath } from '@/lib/paths';
+import { PRIVACY_PATH } from '@/lib/nav';
+import { EVENT } from '@/data/event';
+
+export const getStaticPaths = localeStaticPaths;
+
+const { lang } = Astro.props as { lang: Locale };
+
+/**
+ * Contact page, doubling as an imprint.
+ *
+ * German law (§ 5 DDG, formerly § 5 TMG) requires an Impressum for telemedia
+ * offered "geschäftsmäßig" — commercially or in a business-like way. A private
+ * wedding invitation page for invited guests is neither, so a formal Impressum
+ * is not required here.
+ *
+ * That matters, because a formal Impressum demands a summonable POSTAL ADDRESS.
+ * Publishing the couple's home address on a page anyone with the link can open
+ * is a real privacy cost with no legal benefit. So this page gives the
+ * information that is actually useful — who runs the site and how to reach
+ * them — and says plainly why there is no address.
+ */
+
+const sections = [
+  { id: 'who', heading: 'imprint.whoHeading', body: 'imprint.who' },
+  { id: 'nature', heading: 'imprint.natureHeading', body: 'imprint.nature' },
+  { id: 'content', heading: 'imprint.contentHeading', body: 'imprint.content' },
+  { id: 'photos', heading: 'imprint.photosHeading', body: 'imprint.photos' },
+];
+---
+
+<Base lang={lang} path="/imprint" title={t(lang, 'imprint.title')}>
+  <PageHeader lang={lang} title={t(lang, 'imprint.title')} intro={t(lang, 'imprint.intro')} />
+
+  <section class="section">
+    <div class="container prose imprint">
+      <section class="imprint__section">
+        <h2>{t(lang, 'imprint.contactHeading')}</h2>
+        <p>{t(lang, 'imprint.contactBody')}</p>
+        <p>
+          <a class="button button--secondary" href={`mailto:${EVENT.contact.email}`}>
+            {EVENT.contact.email}
+          </a>
+        </p>
+      </section>
+
+      {
+        sections.map((section) => (
+          <section class="imprint__section" id={section.id}>
+            <h2>{t(lang, section.heading)}</h2>
+            <p>{t(lang, section.body)}</p>
+          </section>
+        ))
+      }
+
+      <p class="imprint__link">
+        <a href={localizedPath(lang, PRIVACY_PATH)}>{t(lang, 'imprint.privacyLink')}</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .imprint__section + .imprint__section {
+    margin-block-start: var(--sp-6);
+  }
+
+  .imprint__section h2 {
+    font-size: var(--step-2);
+    margin-block-end: var(--sp-3);
+  }
+
+  .imprint__link {
+    margin-block-start: var(--sp-7);
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--c-border);
+  }
+</style>

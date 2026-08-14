@@ -1,0 +1,122 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import LocalizedText from './LocalizedText.astro';
+
+interface Props {
+  lang: Locale;
+  hotel: CollectionEntry<'hotels'>['data'];
+}
+
+const { lang, hotel } = Astro.props;
+
+const distanceLabel = hotel.isVenue
+  ? t(lang, 'stay.atTheVenue')
+  : t(lang, 'stay.distance', { km: hotel.distanceKm });
+---
+
+<article class:list={['hotel', hotel.isVenue && 'hotel--venue']}>
+  <header class="hotel__head">
+    <h3 class="hotel__name">{hotel.name}</h3>
+    {hotel.isVenue && <p class="pill hotel__badge">{t(lang, 'stay.venueBadge')}</p>}
+  </header>
+
+  <p class="hotel__meta">
+    <span>{hotel.town}</span>
+    <span aria-hidden="true">·</span>
+    <span>{distanceLabel}</span>
+    {
+      hotel.minutesByCar !== null && hotel.minutesByCar > 0 && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>{t(lang, 'stay.minutesByCar', { minutes: hotel.minutesByCar })}</span>
+        </>
+      )
+    }
+    {
+      hotel.priceBand && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>{t(lang, `stay.price.${hotel.priceBand}`)}</span>
+        </>
+      )
+    }
+  </p>
+
+  {hotel.note && <LocalizedText value={hotel.note} lang={lang} as="p" class="hotel__note" />}
+
+  <div class="hotel__actions">
+    {
+      hotel.url ? (
+        <a class="button button--secondary" href={hotel.url} target="_blank" rel="noopener noreferrer">
+          {t(lang, 'stay.visitSite')}
+          <span class="visually-hidden">({t(lang, 'a11y.externalLink')})</span>
+        </a>
+      ) : (
+        <p class="hotel__nolink muted">{t(lang, 'stay.searchYourself')}</p>
+      )
+    }
+    {hotel.phone && <a class="button button--quiet" href={`tel:${hotel.phone}`}>{hotel.phone}</a>}
+  </div>
+</article>
+
+<style>
+  .hotel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    height: 100%;
+    padding: var(--sp-5);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .hotel--venue {
+    border-color: var(--c-lilac-400);
+    border-width: 2px;
+    background: var(--c-lilac-50);
+  }
+
+  .hotel__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .hotel__name {
+    font-size: var(--step-1);
+  }
+
+  .hotel__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .hotel__note {
+    color: var(--c-text-muted);
+  }
+
+  .hotel__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-block-start: auto;
+    padding-block-start: var(--sp-2);
+  }
+
+  .hotel__actions .button {
+    min-height: 42px;
+  }
+
+  .hotel__nolink {
+    font-size: var(--step--1);
+    font-style: italic;
+  }
+</style>

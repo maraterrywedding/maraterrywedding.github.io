@@ -1,0 +1,435 @@
+---
+import { LOCALE_TAGS, type Locale } from '@/i18n/locales';
+import { t } from '@/i18n/utils';
+import { EVENT } from '@/data/event';
+import { forecastUrl, type Condition } from '@/lib/weather';
+import climate from '@/data/climate-june.json';
+import WeatherIcon from './WeatherIcon.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+
+const CONDITIONS: Condition[] = [
+  'clear',
+  'partlyCloudy',
+  'overcast',
+  'fog',
+  'drizzle',
+  'rain',
+  'showers',
+  'snow',
+  'thunderstorm',
+];
+
+const url = forecastUrl(
+  { lat: EVENT.venue.lat, lon: EVENT.venue.lon, timeZone: EVENT.timeZone },
+  7,
+);
+
+// Everything the script needs to render text, resolved server-side so the
+// client never has to know about locales or dictionaries.
+const labels = {
+  high: t(lang, 'weather.forecast.high'),
+  low: t(lang, 'weather.forecast.low'),
+  rain: t(lang, 'weather.forecast.rainChance'),
+  weddingDay: t(lang, 'weather.weddingDay'),
+  unavailable: t(lang, 'weather.unavailable'),
+  conditions: Object.fromEntries(
+    CONDITIONS.map((condition) => [condition, t(lang, `weather.code.${condition}`)]),
+  ),
+};
+
+const weddingDate = EVENT.ceremony.slice(0, 10);
+---
+
+<section class="weather">
+  <h2 class="weather__title">{t(lang, 'weather.sectionTitle')}</h2>
+
+  <div
+    class="weather__live"
+    data-weather
+    data-url={url}
+    data-wedding={weddingDate}
+    data-locale={LOCALE_TAGS[lang]}
+    data-labels={JSON.stringify(labels)}
+  >
+    <p class="weather__loading" data-weather-loading>{t(lang, 'weather.loading')}</p>
+
+    <div class="weather__now" data-weather-now hidden>
+      <p class="weather__nowLabel">{t(lang, 'weather.now.label')}</p>
+      <div class="weather__nowRow">
+        <span class="weather__nowIcon" data-now-icon></span>
+        <span class="weather__nowTemp" data-now-temp></span>
+        <span class="weather__nowCondition" data-now-condition></span>
+      </div>
+    </div>
+
+    <div class="weather__next" data-weather-next hidden>
+      <p class="weather__nextLabel" id="weather-next-label">{t(lang, 'weather.next.label')}</p>
+      {/* tabindex="0" because this scrolls sideways and holds nothing
+          focusable — without it a keyboard user cannot reach the later days at
+          all, and aria-labelledby gives that focus stop a name.
+          Deliberately NO role: overriding the implicit `list` role orphans the
+          <li> children, trading one violation for another. */}
+      <ul class="days" data-weather-days tabindex="0" aria-labelledby="weather-next-label"></ul>
+    </div>
+
+    <p class="weather__error" data-weather-error hidden></p>
+  </div>
+
+  {/* Always present, generated at build time from thirty years of records, so
+      it renders instantly and works with the network unplugged. */}
+  <div class="climate">
+    <h3 class="climate__title">{t(lang, 'weather.climate.title')}</h3>
+    <p class="climate__summary">
+      {t(lang, 'weather.climate.summary', { high: Math.round(climate.avgHigh), low: Math.round(climate.avgLow) })}
+    </p>
+    <p class="climate__detail">
+      {t(lang, 'weather.climate.rain', { percent: climate.precipDayPercent })}
+    </p>
+    <p class="climate__detail">
+      {
+        t(lang, 'weather.climate.range', {
+          cool: Math.round(climate.coolHigh),
+          warm: Math.round(climate.warmHigh),
+        })
+      }
+    </p>
+    <p class="climate__basis">{t(lang, 'weather.climate.basis', { years: climate.sampleYears })}</p>
+  </div>
+
+  {/* Markup for the script to clone, rather than build with createElement.
+      Astro scopes its CSS with an attribute selector, and elements created in
+      JavaScript never carry that attribute — so a hand-built card would come
+      out completely unstyled. Cloning server-rendered markup keeps the scope
+      attribute intact, and keeps the SVG out of the JavaScript bundle. */}
+  <div class="weather__templates" aria-hidden="true">
+    {
+      CONDITIONS.map((condition) => (
+        <template data-icon={condition}>
+          <WeatherIcon condition={condition} />
+        </template>
+      ))
+    }
+
+    <template data-day-card>
+      <li class="day">
+        <span class="day__name" data-name></span>
+        <span class="day__icon" data-icon-slot></span>
+        <span class="visually-hidden" data-condition></span>
+        <span class="day__temps">
+          <strong data-high></strong>
+          <span class="day__low" data-low></span>
+        </span>
+        <span class="day__rain" data-rain></span>
+      </li>
+    </template>
+  </div>
+</section>
+
+<script>
+  import { parseForecast } from '@/lib/weather';
+
+  interface Labels {
+    high: string;
+    low: string;
+    rain: string;
+    weddingDay: string;
+    unavailable: string;
+    conditions: Record<string, string>;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-weather]');
+
+  if (root) {
+    const labels: Labels = JSON.parse(root.dataset.labels!);
+    const locale = root.dataset.locale!;
+    const weddingDate = root.dataset.wedding!;
+
+    const loading = root.querySelector<HTMLElement>('[data-weather-loading]')!;
+    const nowBlock = root.querySelector<HTMLElement>('[data-weather-now]')!;
+    const nextBlock = root.querySelector<HTMLElement>('[data-weather-next]')!;
+    const errorBlock = root.querySelector<HTMLElement>('[data-weather-error]')!;
+    const dayList = root.querySelector<HTMLElement>('[data-weather-days]')!;
+
+    const iconFor = (condition: string): Node | null => {
+      const template = document.querySelector<HTMLTemplateElement>(`template[data-icon="${condition}"]`);
+      return template ? template.content.cloneNode(true) : null;
+    };
+
+    const weekday = new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'Europe/Berlin' });
+
+    const fail = () => {
+      loading.hidden = true;
+      errorBlock.textContent = labels.unavailable;
+      errorBlock.hidden = false;
+    };
+
+    const render = (raw: unknown) => {
+      const { current, daily } = parseForecast(raw);
+      if (!current && daily.length === 0) {
+        fail();
+        return;
+      }
+
+      loading.hidden = true;
+
+      if (current) {
+        const icon = iconFor(current.condition);
+        if (icon) root.querySelector('[data-now-icon]')!.append(icon);
+        root.querySelector('[data-now-temp]')!.textContent = `${current.temperature}°`;
+        root.querySelector('[data-now-condition]')!.textContent =
+          labels.conditions[current.condition] ?? '';
+        nowBlock.hidden = false;
+      }
+
+      if (daily.length === 0) return;
+
+      const cardTemplate = document.querySelector<HTMLTemplateElement>('template[data-day-card]');
+      if (!cardTemplate) return;
+
+      for (const day of daily) {
+        const fragment = cardTemplate.content.cloneNode(true) as DocumentFragment;
+        const item = fragment.querySelector<HTMLElement>('.day')!;
+
+        // `T12:00` avoids the midnight-UTC trap where the weekday shifts a day.
+        const date = new Date(`${day.date}T12:00:00`);
+        const isWedding = day.date === weddingDate;
+        if (isWedding) item.classList.add('day--wedding');
+
+        item.querySelector('[data-name]')!.textContent = isWedding
+          ? labels.weddingDay
+          : weekday.format(date);
+
+        // The icon is decorative, so the condition is given to screen readers
+        // as visually-hidden text instead.
+        item.querySelector('[data-condition]')!.textContent = labels.conditions[day.condition] ?? '';
+
+        const icon = iconFor(day.condition);
+        if (icon) item.querySelector('[data-icon-slot]')!.append(icon);
+
+        item.querySelector('[data-high]')!.textContent = `${day.high}°`;
+        item.querySelector('[data-low]')!.textContent = `${day.low}°`;
+
+        const rain = item.querySelector<HTMLElement>('[data-rain]')!;
+        if (day.rainChance === null) {
+          rain.remove();
+        } else {
+          rain.textContent = `${labels.rain} ${day.rainChance}%`;
+        }
+
+        dayList.append(fragment);
+      }
+      nextBlock.hidden = false;
+    };
+
+    // Fetched on the client rather than at build time: this is the one part of
+    // the page that is genuinely live. A failure is silent — the climate panel
+    // below is always there, so nobody is left with an error and nothing else.
+    fetch(root.dataset.url!, { headers: { Accept: 'application/json' } })
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error('bad status'))))
+      .then(render)
+      .catch(fail);
+  }
+</script>
+
+<style>
+  .weather {
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .weather > * {
+    min-width: 0;
+  }
+
+  @media (min-width: 56rem) {
+    .weather {
+      grid-template-columns: 1fr 20rem;
+      align-items: start;
+    }
+
+    .weather__title {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .weather__title {
+    font-size: var(--step-2);
+  }
+
+  .weather__live {
+    /* Without this the grid item takes its automatic minimum size — wide
+       enough for all seven day cards — and pushes the whole page sideways.
+       `min-width: 0` lets it shrink so `.days` can scroll inside itself. */
+    min-width: 0;
+    padding: var(--sp-5);
+    background: var(--c-white);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .weather__loading,
+  .weather__error {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .weather__nowLabel,
+  .weather__nextLabel {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-lilac-700);
+  }
+
+  .weather__nowRow {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-block-start: var(--sp-2);
+  }
+
+  .weather__nowIcon {
+    display: block;
+    width: 44px;
+    height: 44px;
+    color: var(--c-forest-600);
+  }
+
+  .weather__nowTemp {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1;
+    color: var(--c-forest-800);
+  }
+
+  .weather__nowCondition {
+    color: var(--c-text-muted);
+  }
+
+  .weather__next {
+    margin-block-start: var(--sp-5);
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--c-border);
+  }
+
+  /* Scrolls inside its own box on a phone; the page body never scrolls sideways. */
+  .days {
+    display: flex;
+    gap: var(--sp-2);
+    margin: var(--sp-3) 0 0;
+    padding: 0 0 var(--sp-2);
+    list-style: none;
+    overflow-x: auto;
+  }
+
+  .day {
+    /* Not cosmetic. Each card holds a `.visually-hidden` span for the weather
+       condition, and that helper is `position: absolute`. An absolutely
+       positioned element is only clipped by an ancestor scroll container when
+       that container is its containing block — otherwise it resolves against
+       the page and drags the whole document's scroll width out with it. With
+       seven cards that put a 165px horizontal scrollbar on every phone.
+       Making the card a containing block keeps them inside `.days`. */
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+    min-width: 4.4rem;
+    padding: var(--sp-3) var(--sp-2);
+    border-radius: var(--radius);
+    background: var(--c-bg-tint);
+    text-align: center;
+  }
+
+  .day--wedding {
+    background: var(--c-forest-700);
+    color: var(--c-white);
+    min-width: 6rem;
+  }
+
+  .day__name {
+    font-size: var(--step--1);
+    font-weight: 600;
+  }
+
+  .day__icon {
+    display: block;
+    width: 26px;
+    height: 26px;
+    color: var(--c-forest-600);
+  }
+
+  .day--wedding .day__icon {
+    color: var(--c-lilac-200);
+  }
+
+  .day__temps {
+    display: flex;
+    gap: var(--sp-2);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--step--1);
+  }
+
+  .day__low {
+    color: var(--c-text-muted);
+  }
+
+  .day--wedding .day__low {
+    color: color-mix(in srgb, var(--c-white) 70%, transparent);
+  }
+
+  .day__rain {
+    font-size: 0.75rem;
+    color: var(--c-text-muted);
+  }
+
+  .day--wedding .day__rain {
+    color: color-mix(in srgb, var(--c-white) 78%, transparent);
+  }
+
+  .climate {
+    padding: var(--sp-5);
+    background: var(--c-lilac-50);
+    border: 1px solid var(--c-lilac-200);
+    border-radius: var(--radius-lg);
+  }
+
+  .climate__title {
+    font-size: var(--step-1);
+  }
+
+  .climate__summary {
+    margin-block-start: var(--sp-3);
+  }
+
+  .climate__detail {
+    margin-block-start: var(--sp-2);
+    font-size: var(--step--1);
+    color: var(--c-text-muted);
+  }
+
+  .climate__basis {
+    margin-block-start: var(--sp-4);
+    padding-block-start: var(--sp-3);
+    border-block-start: 1px solid var(--c-lilac-200);
+    font-size: 0.75rem;
+    color: var(--c-text-muted);
+  }
+
+  .weather__templates {
+    display: none;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+</style>
