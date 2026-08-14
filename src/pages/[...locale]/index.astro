@@ -136,7 +136,7 @@ const nextUp = [
   .hero {
     display: grid;
     isolation: isolate;
-    min-height: min(86dvh, 42rem);
+    min-height: min(92dvh, 46rem);
   }
 
   .hero > * {
@@ -154,12 +154,16 @@ const nextUp = [
     content: '';
     position: absolute;
     inset: 0;
+    /* Lighter through the middle than the previous hero needed. This photo is
+       already warm and dim, and the old scrim turned it muddy — the fairy
+       lights are the best thing in it. It still goes deep at the bottom, where
+       the type actually sits. */
     background: linear-gradient(
       to bottom,
-      rgb(22 40 29 / 0.12) 0%,
-      rgb(22 40 29 / 0.14) 28%,
-      rgb(22 40 29 / 0.55) 52%,
-      rgb(22 40 29 / 0.86) 100%
+      rgb(22 40 29 / 0.06) 0%,
+      rgb(22 40 29 / 0.08) 34%,
+      rgb(22 40 29 / 0.42) 62%,
+      rgb(22 40 29 / 0.88) 100%
     );
   }
 
@@ -175,10 +179,11 @@ const nextUp = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* The source is a 4:3 selfie cropped into a wide banner, so the vertical
-       anchor matters: any lower and the taller of the two loses the top of
-       their head. */
-    object-position: center 22%;
+    /* Tuned to the current hero: the couple are centre-weighted, so the crop is
+       pushed down to lift them clear of the bottom-anchored text. If this photo
+       is ever swapped, expect to retune this AND the hero's min-height — the two
+       together decide whether the names land on somebody's face. */
+    object-position: center 55%;
   }
 
   .hero__body {
@@ -196,9 +201,36 @@ const nextUp = [
     text-shadow: 0 1px 12px rgb(22 40 29 / 0.45);
   }
 
+  /* Taller than it used to be, and deliberately so: at 40rem the crop was tight
+     enough that the names landed directly on the couple's faces. The extra
+     height shows more of the photo, which pushes the faces clear of the
+     bottom-anchored text. */
+  /* On a phone the image is height-constrained — it covers the box vertically
+     and gets cropped at the sides — so `object-position` cannot lift the faces
+     the way it does on desktop. The two levers that DO work are a taller box
+     and a shorter text block: the faces scale with the box while the text stays
+     a fixed height, so both widen the gap between them. */
+  @media (max-width: 47.99rem) {
+    .hero__names {
+      font-size: var(--step-3);
+    }
+
+    .hero__date {
+      font-size: var(--step-0);
+    }
+
+    .hero__body {
+      padding-block-end: var(--sp-5);
+    }
+
+    .hero__actions {
+      margin-block-start: var(--sp-4);
+    }
+  }
+
   @media (min-width: 48rem) {
     .hero {
-      min-height: min(78dvh, 40rem);
+      min-height: min(90dvh, 50rem);
     }
   }
 

@@ -16,6 +16,7 @@
 
 import type { Localized } from '@/i18n/utils';
 
+import newYears from '@/assets/photos/couple/couple-mara-terry-newsyears.jpg';
 import vineyard from '@/assets/photos/couple/couple-20260719-164531394.jpg';
 import river from '@/assets/photos/couple/couple-20260721-103009866-mp.jpg';
 import valleyView from '@/assets/photos/couple/couple-20260720-053354390.jpg';
@@ -40,11 +41,15 @@ export interface Photo {
 const photo = (src: ImageMetadata, alt: Localized<string>): Photo => ({ src, alt });
 
 export const PHOTOS = {
-  /**
-   * Home page hero. Chosen over the river shot because both faces are clear
-   * and neither is behind sunglasses — it is the warmest picture of the set.
-   */
-  hero: photo(vineyard, {
+  /** Home page hero — chosen by the couple. */
+  hero: photo(newYears, {
+    en: 'Mara and Terry at home, a kiss on the cheek and a laugh, with string lights glowing behind them.',
+    de: 'Mara und Terry zu Hause, ein Kuss auf die Wange und ein Lachen, dahinter leuchtet eine Lichterkette.',
+    pt: 'Mara e Terry em casa, um beijo no rosto e uma risada, com luzinhas brilhando ao fundo.',
+  }),
+
+  /** The previous hero. Still one of the best of the set. */
+  coupleVineyard: photo(vineyard, {
     en: 'Mara and Terry smiling side by side, with vineyards and a green valley behind them.',
     de: 'Mara und Terry lächeln Seite an Seite, dahinter Weinberge und ein grünes Tal.',
     pt: 'Mara e Terry sorrindo lado a lado, com vinhedos e um vale verde ao fundo.',

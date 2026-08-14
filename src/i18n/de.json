@@ -85,7 +85,7 @@
   "schedule.title": "Der Tag",
   "schedule.intro": "So ungefähr wird der Tag ablaufen. Es ist noch ein Entwurf — die Zeiten werden konkreter, je näher es rückt. Schaut also später gern noch einmal rein.",
   "schedule.quietHourTitle": "Zur Ruhestunde",
-  "schedule.quietHourBody": "17:00 Uhr ist bewusst eine Lücke. Die Kleinen können schlafen, wer möchte, zieht sich um, und wir beide verschwinden kurz für Fotos. Das ist kein Durchhänger — das ist da, damit der Abend gelingt.",
+  "schedule.quietHourBody": "Eine bewusste Lücke im Tag. Die Kleinen können schlafen, wer möchte, zieht sich um, und alle können einmal durchatmen. Das ist kein Durchhänger — das ist da, damit der Abend gelingt.",
 
   "travel.title": "Anfahrt",
   "travel.intro": "Grohnde ist ein kleines Dorf an der Weser, etwa eine Stunde von Hannover entfernt. So kommen die meisten zu uns.",
@@ -118,7 +118,8 @@
 
   "dress.title": "Dresscode",
   "dress.intro": "Dresscodes ergeben eigentlich nur im Vergleich zueinander Sinn, deshalb hier die ganze Bandbreite — und dazu die paar Dinge zu dieser Location, die man vor dem Kofferpacken wissen sollte.",
-  "dress.notChosen": "Wir haben uns noch nicht auf einen Dresscode festgelegt. Sobald es so weit ist, markieren wir ihn hier. Alles Weitere auf dieser Seite gilt unabhängig davon.",
+  "dress.anyCode": "Jede dieser vier Varianten ist willkommen — zieht an, worin ihr euch wohlfühlt.",
+  "dress.anyCodeRules": "Nur zwei Bitten: keine Jogginghose und kein Hoodie, und außer der Braut trägt niemand ein weißes Kleid.",
   "dress.chosenIs": "Wir haben uns für {name} entschieden.",
   "dress.compareTitle": "Die üblichen Codes, von leger bis festlich",
   "dress.feminine": "Kleider und Röcke",

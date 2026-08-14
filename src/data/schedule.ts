@@ -44,14 +44,14 @@ export const SCHEDULE: ScheduleEntry[] = [
     time: '10:30',
     highlight: true,
     title: {
-      en: 'Guests arrive, welcome drinks',
-      de: 'Ankunft der Gäste, Empfangsgetränke',
-      pt: 'Chegada dos convidados, drinques de boas-vindas',
+      en: 'Guests arrive',
+      de: 'Ankunft der Gäste',
+      pt: 'Chegada dos convidados',
     },
     note: {
-      en: 'Come a little early if you can — there is no rush, and it is a lovely spot by the river.',
-      de: 'Kommt gern etwas früher — es eilt nichts, und der Platz an der Weser ist wunderschön.',
-      pt: 'Venham um pouquinho antes, se puderem — não há pressa, e o lugar à beira do rio é lindo.',
+      en: 'Please be seated by 10:50. There will be water out for you — the Sekt comes after the ceremony.',
+      de: 'Bitte nehmt bis 10:50 Uhr Platz. Wasser steht für euch bereit — der Sekt kommt nach der Trauung.',
+      pt: 'Por favor, sentem-se até as 10:50. Vai ter água à disposição — o espumante vem depois da cerimônia.',
     },
   },
   {
@@ -79,6 +79,11 @@ export const SCHEDULE: ScheduleEntry[] = [
   {
     time: '11:50',
     title: { en: 'Sekt reception', de: 'Sektempfang', pt: 'Recepção com espumante' },
+    note: {
+      en: 'The first toast of the day — after the ceremony, not before.',
+      de: 'Der erste Anstoß des Tages — nach der Trauung, nicht davor.',
+      pt: 'O primeiro brinde do dia — depois da cerimônia, não antes.',
+    },
   },
   {
     time: '12:30',
@@ -96,9 +101,9 @@ export const SCHEDULE: ScheduleEntry[] = [
   {
     time: '15:00',
     title: {
-      en: 'Coffee, cake and tortes',
-      de: 'Kaffee, Kuchen und Torten',
-      pt: 'Café, bolos e tortas',
+      en: 'Coffee and cake',
+      de: 'Kaffee und Kuchen',
+      pt: 'Café e bolo',
     },
   },
   {
@@ -131,13 +136,15 @@ export const SCHEDULE: ScheduleEntry[] = [
       pt: 'Hora do sossego',
     },
     note: {
-      en: 'A breather: little ones can nap, everyone can change, and we sneak away for photos.',
-      de: 'Eine Pause: Die Kleinen können schlafen, alle können sich umziehen, und wir verschwinden kurz für Fotos.',
-      pt: 'Uma pausa: as crianças podem dormir, todo mundo pode se trocar, e nós escapamos para as fotos.',
+      en: 'A breather: little ones can nap, everyone can change and catch their breath.',
+      de: 'Eine Pause: Die Kleinen können schlafen, alle können sich umziehen und einmal durchatmen.',
+      pt: 'Uma pausa: as crianças podem dormir, todo mundo pode se trocar e respirar um pouco.',
     },
   },
   {
-    time: '18:00',
+    // TODO: this now collides with the 17:00 quiet hour. Two things cannot both
+    // start at 17:00 — one of the two needs to move before this is final.
+    time: '17:00',
     highlight: true,
     title: {
       en: 'Dinner, first dance, and the party',

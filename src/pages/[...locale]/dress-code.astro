@@ -37,9 +37,11 @@ const TIP_ICONS: Record<string, string> = {
             <h2 class="chosen__gloss">{pickLocalized(chosen.gloss, lang).value}</h2>
           </div>
         ) : (
-          <div class="card chosen chosen--undecided">
-            <p class="pill pill--quiet">{t(lang, 'common.comingSoon')}</p>
-            <p class="chosen__pending">{t(lang, 'dress.notChosen')}</p>
+          /* No single code chosen — but that is a decision, not an open
+             question, so this reads as an answer rather than a placeholder. */
+          <div class="card chosen">
+            <h2 class="chosen__gloss">{t(lang, 'dress.anyCode')}</h2>
+            <p class="chosen__rules">{t(lang, 'dress.anyCodeRules')}</p>
           </div>
         )
       }
@@ -119,8 +121,9 @@ const TIP_ICONS: Record<string, string> = {
     max-width: var(--measure);
   }
 
-  .chosen--undecided {
-    border-style: dashed;
+  .chosen {
+    border-color: var(--c-lilac-300);
+    background: var(--c-lilac-50);
   }
 
   .chosen__gloss {
@@ -128,9 +131,10 @@ const TIP_ICONS: Record<string, string> = {
     font-size: var(--step-2);
   }
 
-  .chosen__pending {
+  .chosen__rules {
     margin-block-start: var(--sp-3);
-    color: var(--c-text-muted);
+    font-weight: 600;
+    color: var(--c-forest-700);
   }
 
   /* Horizontally scrollable on a phone so the ladder stays a ladder — reading

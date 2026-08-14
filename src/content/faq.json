@@ -42,9 +42,9 @@
       "pt": "É dentro ou ao ar livre?"
     },
     "answer": {
-      "en": "Both. The ceremony and dinner are inside, and a good part of the afternoon is out in the garden and along the river. Plan for grass underfoot and a cooler evening by the water.",
-      "de": "Beides. Trauung und Abendessen sind drinnen, ein großer Teil des Nachmittags findet im Garten und am Fluss statt. Rechnet mit Gras unter den Füßen und einem kühleren Abend am Wasser.",
-      "pt": "Os dois. A cerimônia e o jantar são dentro, e boa parte da tarde é no jardim e à beira do rio. Contem com grama sob os pés e uma noite mais fresca perto da água."
+      "en": "We are hoping to hold the ceremony outside — in the garden or down by the river — but that depends entirely on the weather, so we will decide close to the day. Either way, plan for grass underfoot and a cooler evening by the water.",
+      "de": "Wir hoffen, die Trauung draußen zu feiern — im Garten oder unten an der Weser —, aber das hängt ganz vom Wetter ab, deshalb entscheiden wir das erst kurz vorher. So oder so: Rechnet mit Gras unter den Füßen und einem kühleren Abend am Wasser.",
+      "pt": "A gente espera fazer a cerimônia ao ar livre — no jardim ou lá embaixo, à beira do rio —, mas isso depende totalmente do tempo, então vamos decidir perto do dia. De todo jeito, contem com grama sob os pés e uma noite mais fresca perto da água."
     }
   },
   {
@@ -179,16 +179,16 @@
     "id": "gifts",
     "order": 200,
     "category": "gifts",
-    "status": "provisional",
+    "status": "final",
     "question": {
       "en": "What about gifts?",
       "de": "Und was ist mit Geschenken?",
       "pt": "E os presentes?"
     },
     "answer": {
-      "en": "We are still thinking about this one and will put a proper answer here well before the day. Please do not worry about it for now — you being there is the point.",
-      "de": "Darüber denken wir noch nach und schreiben rechtzeitig vor dem Tag eine richtige Antwort hierhin. Macht euch vorerst bitte keine Gedanken — dass ihr da seid, ist die Hauptsache.",
-      "pt": "Ainda estamos pensando nisso e vamos colocar uma resposta de verdade aqui bem antes do dia. Por enquanto, não se preocupem — o que importa é vocês estarem lá."
+      "en": "We know how much it costs all of you to be there, and we do not take that lightly. So we are not expecting gifts. If you would like to give something anyway, of course you are welcome to.",
+      "de": "Wir wissen, wie teuer es für euch alle ist, dabei zu sein, und das wissen wir sehr zu schätzen. Geschenke erwarten wir deshalb nicht. Wer trotzdem gern etwas schenken möchte, darf das natürlich.",
+      "pt": "A gente sabe o quanto custa para vocês estarem lá, e damos muito valor a isso. Por isso, não esperamos presentes. Se ainda assim quiserem dar alguma coisa, claro que podem."
     }
   }
 ]

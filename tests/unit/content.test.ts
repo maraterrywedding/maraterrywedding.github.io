@@ -148,10 +148,17 @@ describe('schedule', () => {
     expect(guest.some((e) => e.time === '16:00')).toBe(false);
   });
 
-  it('still shows guests the moments that anchor the day', () => {
-    const times = guestSchedule().map((e) => e.time);
-    for (const anchor of ['10:30', '11:00', '18:00']) {
-      expect(times, `guests must see ${anchor}`).toContain(anchor);
+  it('still shows guests every moment marked as an anchor', () => {
+    // Checked by meaning, not by clock time. Times shift as the plan firms up —
+    // the earlier version hardcoded 18:00 and broke the moment dinner moved,
+    // which told us nothing useful. What actually matters is that no
+    // highlighted moment is ever accidentally flagged `internal` and hidden.
+    const guest = guestSchedule();
+    const anchors = SCHEDULE.filter((entry) => entry.highlight);
+
+    expect(anchors.length, 'the day should have at least three anchors').toBeGreaterThanOrEqual(3);
+    for (const anchor of anchors) {
+      expect(guest, `guests must see "${anchor.title.en}"`).toContain(anchor);
     }
   });
 

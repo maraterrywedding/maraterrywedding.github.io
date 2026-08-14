@@ -176,9 +176,9 @@ export const DRESS_TIPS: DressTip[] = [
       pt: 'Deixem o branco para a noiva',
     },
     body: {
-      en: 'White, ivory and cream are the only colours we would ask you to avoid. Everything else is open — the more colour the better.',
-      de: 'Weiß, Elfenbein und Creme sind die einzigen Farben, um die wir euch bitten würden, einen Bogen zu machen. Alles andere ist offen — je bunter, desto besser.',
-      pt: 'Branco, marfim e creme são as únicas cores que pedimos que evitem. O resto está liberado — quanto mais cor, melhor.',
+      en: 'Nobody but the bride wears a white dress — and that includes ivory and cream. Everything else is open, and the more colour the better.',
+      de: 'Außer der Braut trägt niemand ein weißes Kleid — Elfenbein und Creme zählen mit dazu. Alles andere ist offen, und je bunter, desto besser.',
+      pt: 'Ninguém além da noiva usa vestido branco — marfim e creme contam também. O resto está liberado, e quanto mais cor, melhor.',
     },
   },
   {

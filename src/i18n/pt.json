@@ -85,7 +85,7 @@
   "schedule.title": "O dia",
   "schedule.intro": "É mais ou menos assim que o dia vai ser. Ainda é um rascunho — vamos fechar os horários conforme a data chegar, então vale dar outra olhada mais perto.",
   "schedule.quietHourTitle": "Sobre a hora do sossego",
-  "schedule.quietHourBody": "As 17:00 são uma pausa de propósito. As crianças podem dormir, quem quiser se troca, e nós dois escapamos para fazer fotos. Não é uma parada morta — é o que faz a noite funcionar.",
+  "schedule.quietHourBody": "Uma pausa de propósito no meio do dia. As crianças podem dormir, quem quiser se troca, e todo mundo consegue respirar um pouco. Não é uma parada morta — é o que faz a noite funcionar.",
 
   "travel.title": "Como chegar",
   "travel.intro": "Grohnde é um vilarejo à beira do rio Weser, a cerca de uma hora de Hannover. É assim que a maioria vai chegar até nós.",
@@ -118,7 +118,8 @@
 
   "dress.title": "O que vestir",
   "dress.intro": "Dress code só faz sentido de verdade em comparação, então aqui está a escala inteira — e também as poucas coisas sobre este lugar que vale saber antes de fazer as malas.",
-  "dress.notChosen": "Ainda não definimos o dress code. Quando definirmos, ele vai aparecer destacado aqui embaixo. Tudo o que vem depois nesta página vale de qualquer forma.",
+  "dress.anyCode": "Qualquer uma das quatro está ótima — vistam o que fizer vocês se sentirem bem.",
+  "dress.anyCodeRules": "Só dois pedidos: nada de moletom ou blusa de capuz, e ninguém de vestido branco além da noiva.",
   "dress.chosenIs": "Escolhemos {name}.",
   "dress.compareTitle": "Os códigos de sempre, do mais relaxado ao mais formal",
   "dress.feminine": "Vestidos e saias",
