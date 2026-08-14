@@ -1,9 +1,7 @@
-# Mara & Terry — wedding website
+# Wedding website
 
-Friday **11 June 2027**, Grohnder Fährhaus, Emmerthal-Grohnde.
-Live at **https://maraterrywedding.github.io**
-
-English, German and Brazilian Portuguese, from one set of source files.
+A small trilingual static site — English, German and Brazilian Portuguese —
+with an RSVP form, built from one set of source files.
 
 ```bash
 npm install
@@ -13,28 +11,41 @@ npm run dev:api    # mock RSVP backend on :8788, second terminal
 
 Then open http://localhost:4321.
 
-## What's here
+## How it fits together
 
 | | |
 |---|---|
-| **Site** | Astro 5, static output, deployed to GitHub Pages by Actions |
+| **Site** | Astro 5, static output, deployed by GitHub Actions |
 | **RSVP backend** | Google Apps Script writing to a Google Sheet — see [`gas/SETUP.md`](gas/SETUP.md) |
 | **Tests** | 287 unit (Vitest), 41 end-to-end and accessibility (Playwright) |
 
-The keystone is [`src/lib/rsvp/validate.ts`](src/lib/rsvp/validate.ts): the
+The keystone is [`src/lib/rsvp/validate.ts`](src/lib/rsvp/validate.ts). The
 browser form, the Apps Script backend and the test suite all import it, so the
-client and server cannot disagree about what a valid reply looks like.
+client and the server cannot disagree about what a valid reply looks like.
 
-## Changing things without touching code
+A few other decisions worth knowing before changing things:
+
+- **Content is data, not markup.** Adding a question, a hotel or a schedule
+  entry is a data change; the templates stay untouched.
+- **Every translatable field carries all three languages inline**, with `null`
+  meaning "not translated yet" — which renders the English and marks it up as
+  such. A test fails if a key goes missing without being declared pending.
+- **Guest replies live only in the spreadsheet.** Nothing submitted is ever
+  rendered into the site, and no guest data is in this repository.
+- **Photos are stripped of EXIF** before they reach `src/assets/`. The
+  originals are deliberately not committed — they still carry location
+  metadata.
+
+## Changing content without touching code
 
 | What | Where |
 |---|---|
 | Add a Q&A entry | Type `/addqa <question> \| <answer>` |
-| Edit Q&A, hotels | `src/content/faq.json`, `src/content/hotels.json` |
+| Edit Q&A, accommodation | `src/content/faq.json`, `src/content/hotels.json` |
 | The day's plan | `src/data/schedule.ts` — `internal: true` hides a line from guests |
-| Dress code choice | `CHOSEN_CODE` in `src/data/dresscode.ts` |
-| Dates, address, album links | `src/data/event.ts` |
-| RSVP deadlines, invite code | The **Config** tab of the spreadsheet — read on every request, no redeploy |
+| Dress code | `CHOSEN_CODE` in `src/data/dresscode.ts` |
+| Dates, venue, album links | `src/data/event.ts` |
+| RSVP deadlines | The **Config** tab of the spreadsheet — read on every request, no redeploy |
 
 ## Commands
 
@@ -44,12 +55,12 @@ npm run test:e2e       # end-to-end + accessibility
 npm run build          # static build into dist/
 npm run build:gas      # bundle the backend into gas/dist/Code.gs
 npm run fetch:climate  # refresh the June weather averages (needs internet)
-node scripts/prep-photos.mjs             # after adding photos to resources/fotos/
+node scripts/prep-photos.mjs             # after adding photos
 node scripts/shot.mjs --full /           # screenshots into scratch/shots/
 node scripts/smoke-rsvp.mjs <exec-url>   # check a live backend deployment
 ```
 
 ## Status
 
-[`docs/PROGRESS.md`](docs/PROGRESS.md) — what's done, what's decided, what's
-still needed. Session-by-session notes are in `docs/SESSION-*.md`.
+[`docs/PROGRESS.md`](docs/PROGRESS.md) — what is done, what is decided, what is
+still needed. Session notes are in `docs/SESSION-*.md`.
