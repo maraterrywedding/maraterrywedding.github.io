@@ -31,8 +31,15 @@ export const EVENT = {
   /** The couple are on site from the night before; used to sell the Thursday night. */
   coupleArrive: '2027-06-10',
 
-  /** The only three nights the venue hotel is offered for. */
-  hotelNights: ['2027-06-10', '2027-06-11', '2027-06-12'],
+  /**
+   * The nights the venue hotel is offered for — the night before and the
+   * wedding night. Rooms are only being held for these two.
+   *
+   * The backend validates submitted nights against its OWN copy in the
+   * spreadsheet's Config tab, so changing this list alone is not enough: the
+   * `hotelNights` cell has to match, or a guest's choice gets rejected.
+   */
+  hotelNights: ['2027-06-10', '2027-06-11'],
 
   rsvp: {
     /**

@@ -38,7 +38,7 @@ const CONFIG_DEFAULTS: Record<string, string> = {
   softDeadline: '2026-11-05T23:59:59+01:00',
   hardLock: '2026-12-15T23:59:59+01:00',
   eventAt: '2027-06-11T11:00:00+02:00',
-  hotelNights: '2027-06-10,2027-06-11,2027-06-12',
+  hotelNights: '2027-06-10,2027-06-11',
   inviteCode: 'GROHNDE27',
   siteOrigin: 'http://localhost:4321',
   replyTo: '',
