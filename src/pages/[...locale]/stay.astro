@@ -63,8 +63,14 @@ const thursday = formatDayAndMonth(EVENT.coupleArrive, lang);
     display: grid;
     gap: var(--sp-5);
     list-style: none;
-    margin: 0;
     padding: 0;
+    /* Spacing set explicitly rather than left to `.stack-lg`. The shorthand
+       `margin: 0` that used to clear the list's default also clobbered the
+       stack's top margin — at equal specificity the scoped rule won, and the
+       "come the night before" card ended up flush against this list with a gap
+       of exactly zero. Being explicit removes the dependence on source order. */
+    margin-block: var(--sp-7) 0;
+    margin-inline: 0;
   }
 
   @media (min-width: 48rem) {
