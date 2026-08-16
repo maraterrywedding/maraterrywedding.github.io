@@ -35,7 +35,7 @@ const PORT = Number(process.env.MOCK_RSVP_PORT ?? 8788);
 
 /** Overridable so a test can drive the server into the late or locked phase. */
 const CONFIG: BackendConfig = {
-  softDeadline: process.env.MOCK_SOFT_DEADLINE ?? '2026-11-05T23:59:59+01:00',
+  softDeadline: process.env.MOCK_SOFT_DEADLINE ?? '2026-11-01T23:59:59+01:00',
   hardLock: process.env.MOCK_HARD_LOCK ?? '2026-12-15T23:59:59+01:00',
   eventAt: '2027-06-11T11:00:00+02:00',
   hotelNights: ['2027-06-10', '2027-06-11'],

@@ -24,7 +24,7 @@ Detailed session notes live alongside this file as `SESSION-<date>.md`.
 | Date | Friday 11 June 2027, 11:00 Europe/Berlin — **time not final**, may move to 13:00 |
 | Venue | Grohnder Fährhaus, Grohnder Fähre 1, 31860 Emmerthal-Grohnde |
 | Couple arrive | 10 June 2027 (advertised to guests) |
-| RSVP soft deadline | 5 November 2026 — early headcount, form stays open |
+| RSVP soft deadline | **1 November 2026, 23:59** — the date guests are told. Form stays open past it; late replies are flagged |
 | RSVP hard lock | 15 December 2026 — form goes read-only |
 | Backend | Google Apps Script + Google Sheet |
 | Contact | maraterrywedding@gmail.com — the wedding-only account that also owns the RSVP spreadsheet |

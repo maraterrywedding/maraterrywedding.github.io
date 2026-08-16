@@ -182,20 +182,6 @@ export const DRESS_TIPS: DressTip[] = [
     },
   },
   {
-    id: 'change',
-    icon: 'change',
-    title: {
-      en: 'There is a moment to change before dinner',
-      de: 'Vor dem Abendessen ist Zeit zum Umziehen',
-      pt: 'Dá para se trocar antes do jantar',
-    },
-    body: {
-      en: 'The quiet time in the late afternoon is there for exactly this. Dress up for the ceremony and change into something you can dance in — plenty of people will.',
-      de: 'Genau dafür ist die Ruhezeit am späten Nachmittag da. Zieht euch für die Trauung fein an und wechselt danach in etwas, worin ihr tanzen könnt — viele werden das tun.',
-      pt: 'O momento de sossego no fim da tarde existe exatamente para isso. Vistam-se bem para a cerimônia e depois troquem por algo em que dê para dançar — muita gente vai fazer isso.',
-    },
-  },
-  {
     id: 'kids',
     icon: 'kids',
     title: { en: 'For the children', de: 'Für die Kinder', pt: 'Para as crianças' },

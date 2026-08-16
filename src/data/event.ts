@@ -47,7 +47,9 @@ export const EVENT = {
      * hold hotel rooms. After it passes the form shows a gentle nudge and
      * stamps new submissions as late.
      */
-    softDeadline: '2026-11-05T23:59:59+01:00',
+    // 1 November 2026, 23:59. +01:00 because German summer time ends on
+    // 25 October, so this date falls in CET.
+    softDeadline: '2026-11-01T23:59:59+01:00',
     /**
      * Hard lock: the form goes READ-ONLY. Tokens keep working so guests can
      * still see what they answered — never a dead end.

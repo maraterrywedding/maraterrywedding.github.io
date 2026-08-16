@@ -10,9 +10,9 @@
       "pt": "A que horas eu devo chegar de verdade?"
     },
     "answer": {
-      "en": "From 10:30, so there is time for a welcome drink before the ceremony starts at 11:00. If you are driving a long way, give yourself a buffer — the last stretch is a country road.",
-      "de": "Ab 10:30 Uhr, dann bleibt Zeit für ein Empfangsgetränk, bevor die Trauung um 11:00 Uhr beginnt. Wer weit fährt, sollte etwas Puffer einplanen — das letzte Stück ist Landstraße.",
-      "pt": "A partir das 10:30, assim dá tempo de tomar um drinque de boas-vindas antes de a cerimônia começar às 11:00. Quem vem de longe de carro, reserve uma folga — o último trecho é estrada de interior."
+      "en": "Still a work in progress — the running order is not settled yet. We will put the arrival time here and let you know as soon as it is, well before you need to book anything.",
+      "de": "Noch in Arbeit — der Ablauf steht noch nicht fest. Sobald es so weit ist, tragen wir die Ankunftszeit hier ein und sagen euch Bescheid, rechtzeitig bevor ihr irgendetwas buchen müsst.",
+      "pt": "Ainda em construção — o roteiro do dia ainda não está fechado. Assim que estiver, colocamos o horário de chegada aqui e avisamos vocês, bem antes de precisarem reservar qualquer coisa."
     }
   },
   {
@@ -131,7 +131,7 @@
     "id": "language",
     "order": 90,
     "category": "basics",
-    "status": "provisional",
+    "status": "final",
     "question": {
       "en": "What language will the day be in?",
       "de": "In welcher Sprache findet der Tag statt?",
@@ -147,16 +147,16 @@
     "id": "rsvp-deadline",
     "order": 100,
     "category": "basics",
-    "status": "provisional",
+    "status": "final",
     "question": {
       "en": "When do you need my answer?",
       "de": "Bis wann braucht ihr meine Antwort?",
       "pt": "Até quando vocês precisam da minha resposta?"
     },
     "answer": {
-      "en": "As early as you can, please — we need rough numbers well in advance to hold hotel rooms. You can change your answer afterwards using the link we email you, right up until the form closes.",
-      "de": "So früh wie möglich, bitte — wir brauchen ungefähre Zahlen weit im Voraus, um Hotelzimmer zu blocken. Ihr könnt eure Antwort danach jederzeit über den Link ändern, den wir euch per E-Mail schicken, bis das Formular schließt.",
-      "pt": "O quanto antes, por favor — precisamos de números aproximados bem cedo para segurar os quartos do hotel. Vocês podem mudar a resposta depois pelo link que enviamos por e-mail, até o formulário fechar."
+      "en": "By 1 November 2026, at the latest. We need the numbers by then to hold the hotel rooms. You can still change your answer afterwards using the link we email you — just tell us before the deadline whether you are coming.",
+      "de": "Spätestens bis zum 1. November 2026. Bis dahin brauchen wir die Zahlen, um die Hotelzimmer zu blocken. Ändern könnt ihr eure Antwort danach weiterhin über den Link, den wir euch per E-Mail schicken — sagt uns nur bis zur Frist, ob ihr kommt.",
+      "pt": "Até 1º de novembro de 2026, no máximo. Precisamos dos números até lá para segurar os quartos do hotel. Vocês ainda podem mudar a resposta depois pelo link que enviamos por e-mail — só avisem até o prazo se vêm ou não."
     }
   },
   {
