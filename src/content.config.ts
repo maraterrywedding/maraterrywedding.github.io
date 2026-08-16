@@ -56,6 +56,13 @@ const hotels = defineCollection({
     /** True for the wedding venue itself, which is presented differently. */
     isVenue: z.boolean().default(false),
     note: localized.nullable().default(null),
+    /**
+     * One sentence given extra weight, for the thing a guest must not miss.
+     * A separate field rather than markup inside `note`, because notes render
+     * as text — putting HTML in translated content is how you end up shipping
+     * a stray `<strong>` to a guest.
+     */
+    callout: localized.nullable().default(null),
     status,
     order: z.number().int().default(100),
   }),

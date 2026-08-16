@@ -13,9 +13,14 @@
     "order": 0,
     "status": "provisional",
     "note": {
-      "en": "The wedding venue itself, and by far the easiest option — you can go straight upstairs at the end of the night. Tell us in your RSVP which nights you would want and we will pass the list on.",
-      "de": "Die Hochzeitslocation selbst und mit Abstand die einfachste Lösung — am Ende des Abends geht ihr einfach nach oben. Sagt uns in der Zusage, welche Nächte ihr möchtet, dann geben wir die Liste weiter.",
-      "pt": "O próprio local do casamento e, de longe, a opção mais fácil — no fim da noite é só subir. Digam na confirmação de presença quais noites vocês querem e a gente repassa a lista."
+      "en": "The wedding venue itself, and by far the easiest option — you can go straight upstairs at the end of the night. Please do not book anything yourself yet: we are holding rooms and will come back to you. The hotel normally asks for a two-night minimum, but we are arranging it so you can choose one night or two.",
+      "de": "Die Hochzeitslocation selbst und mit Abstand die einfachste Lösung — am Ende des Abends geht ihr einfach nach oben. Bitte bucht noch nichts selbst: Wir halten Zimmer für euch frei und melden uns. Normalerweise verlangt das Hotel mindestens zwei Nächte, aber wir richten es so ein, dass ihr zwischen einer und zwei Nächten wählen könnt.",
+      "pt": "O próprio local do casamento e, de longe, a opção mais fácil — no fim da noite é só subir. Por favor, não reservem nada por conta própria ainda: estamos segurando quartos e voltamos a falar com vocês. Normalmente o hotel exige no mínimo duas noites, mas estamos combinando para que vocês possam escolher entre uma ou duas."
+    },
+    "callout": {
+      "en": "Tell us in your RSVP which nights you would want and we will pass the list on.",
+      "de": "Sagt uns in der Zusage, welche Nächte ihr möchtet — wir geben die Liste weiter.",
+      "pt": "Digam na confirmação de presença quais noites vocês querem — a gente repassa a lista."
     }
   },
   {

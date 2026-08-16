@@ -9,15 +9,13 @@ import type { Locale } from '@/i18n/locales';
 import { localizedPath } from '@/lib/paths';
 import { NAV, RSVP_PATH } from '@/lib/nav';
 import { EVENT } from '@/data/event';
-import { formatDate, formatDateWithWeekday, formatDayAndMonth, formatTime } from '@/lib/format';
+import { formatDate, formatDateWithWeekday, formatDayAndMonth } from '@/lib/format';
 
 export const getStaticPaths = localeStaticPaths;
 
 const { lang } = Astro.props as { lang: Locale };
 
 const ceremonyDate = formatDate(EVENT.ceremony, lang);
-const ceremonyTime = formatTime(EVENT.ceremony, lang);
-const arrivalTime = formatTime(EVENT.guestsArriveFrom, lang);
 const fullDate = formatDateWithWeekday(EVENT.ceremony, lang);
 const thursday = formatDayAndMonth(EVENT.coupleArrive, lang);
 
@@ -67,15 +65,9 @@ const nextUp = [
       <div class="save__text stack">
         <p class="eyebrow">{t(lang, 'home.saveTheDate.title')}</p>
         <h2>{ceremonyDate}</h2>
-        <p class="lead">
-          {
-            t(lang, 'home.saveTheDate.body', {
-              date: ceremonyDate,
-              arrival: arrivalTime,
-              ceremony: ceremonyTime,
-            })
-          }
-        </p>
+        {/* No times here on purpose — the running order is not settled, and
+            the pill below is the whole story until it is. */}
+        <p class="lead">{t(lang, 'home.saveTheDate.body')}</p>
 
         {
           !EVENT.ceremonyTimeConfirmed && (

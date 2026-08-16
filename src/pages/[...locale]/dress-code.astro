@@ -181,7 +181,8 @@ const TIP_ICONS: Record<string, string> = {
     font-size: var(--step-1);
   }
 
-  .ladder__gloss {
+  /* :global() — rendered by <LocalizedText>. See the note in that component. */
+  .ladder :global(.ladder__gloss) {
     font-size: var(--step--1);
     color: var(--c-lilac-700);
     font-weight: 600;
@@ -248,11 +249,11 @@ const TIP_ICONS: Record<string, string> = {
     height: 22px;
   }
 
-  .tip__title {
+  .tip :global(.tip__title) {
     font-size: var(--step-1);
   }
 
-  .tip__body {
+  .tip :global(.tip__body) {
     margin-block-start: var(--sp-2);
     color: var(--c-text-muted);
   }

@@ -44,6 +44,12 @@ const distanceLabel = hotel.isVenue
     }
   </p>
 
+  {
+    hotel.callout && (
+      <LocalizedText value={hotel.callout} lang={lang} as="p" class="hotel__callout" />
+    )
+  }
+
   {hotel.note && <LocalizedText value={hotel.note} lang={lang} as="p" class="hotel__note" />}
 
   <div class="hotel__actions">
@@ -98,7 +104,20 @@ const distanceLabel = hotel.isVenue
     color: var(--c-text-muted);
   }
 
-  .hotel__note {
+  /* `:global()` because these elements are rendered by <LocalizedText>, and
+     Astro's scoped CSS does not reach into a child component. Without it the
+     rules match nothing and fail silently — which is exactly what `.hotel__note`
+     did, unnoticed, from the day it was written. */
+  .hotel :global(.hotel__callout) {
+    padding: var(--sp-3) var(--sp-4);
+    border-inline-start: 4px solid var(--c-forest-600);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: var(--c-white);
+    font-weight: 700;
+    color: var(--c-forest-800);
+  }
+
+  .hotel :global(.hotel__note) {
     color: var(--c-text-muted);
   }
 

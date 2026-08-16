@@ -22,6 +22,18 @@ const { value: text, isFallback } = pickLocalized(value, lang);
 const langAttr = isFallback ? LOCALE_TAGS[DEFAULT_LOCALE] : undefined;
 ---
 
-<Tag class={className} lang={langAttr}>{text}</Tag>{
-  isFallback && note && <small class="untranslated-note">{t(lang, 'common.notTranslated')}</small>
-}
+{/*
+  The "not translated" note is nested inside the tag rather than trailing it as
+  a sibling, so this component has a single root. `<small>` is phrasing content
+  and nests legally inside every tag rendered here.
+
+  NOTE FOR CALLERS: Astro's scoped CSS does NOT reach this element. A class
+  passed in as `class="hotel__note"` lands on the DOM node, but the parent's
+  `data-astro-cid-*` attribute does not — so a plain `.hotel__note { … }` rule
+  in the parent's <style> block matches nothing and fails silently. Style it as
+  `.parent :global(.hotel__note) { … }` instead.
+*/}
+<Tag class={className} lang={langAttr}>
+  {text}
+  {isFallback && note && <small class="untranslated-note">{t(lang, 'common.notTranslated')}</small>}
+</Tag>

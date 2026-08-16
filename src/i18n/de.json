@@ -44,7 +44,7 @@
   "home.countdown.passed": "Wir sind verheiratet. Danke, dass ihr dabei wart.",
 
   "home.saveTheDate.title": "Save the Date",
-  "home.saveTheDate.body": "Im Grohnder Fährhaus, direkt an der Weser. Ankommen ab {arrival}, die Trauung beginnt um {ceremony}.",
+  "home.saveTheDate.body": "Im Grohnder Fährhaus, direkt an der Weser. Die Uhrzeiten geben wir bekannt, sobald sie feststehen.",
   "home.saveTheDate.addToCalendar": "In den Kalender eintragen",
   "home.saveTheDate.weAreThereFrom": "Wir sind schon ab {date} im Fährhaus — kommt gern am Abend davor dazu.",
 
@@ -84,8 +84,9 @@
 
   "schedule.title": "Der Tag",
   "schedule.intro": "So ungefähr wird der Tag ablaufen. Es ist noch ein Entwurf — die Zeiten werden konkreter, je näher es rückt. Schaut also später gern noch einmal rein.",
-  "schedule.quietHourTitle": "Zur Ruhezeit",
-  "schedule.quietHourBody": "Eine bewusste Lücke im Tag. Die Kleinen können schlafen, wer möchte, zieht sich um, und alle können einmal durchatmen. Das ist kein Durchhänger — das ist da, damit der Abend gelingt.",
+  "schedule.draftHeading": "Noch in Arbeit",
+  "schedule.draftBody": "Was hier steht, ist eine erste Skizze, kein fertiger Plan. Zeiten verschieben sich noch, und Teile davon können sich ganz ändern. Wir aktualisieren die Seite und sagen euch Bescheid, sobald es steht — ihr müsst damit gerade nichts anfangen.",
+  "schedule.draftLabel": "Entwurf",
 
   "travel.title": "Anfahrt",
   "travel.intro": "Grohnde ist ein kleines Dorf an der Weser, etwa eine Stunde von Hannover entfernt. So kommen die meisten zu uns.",

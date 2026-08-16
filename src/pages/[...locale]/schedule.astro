@@ -11,6 +11,9 @@ import { SCHEDULE_IS_PROVISIONAL } from '@/data/schedule';
 export const getStaticPaths = localeStaticPaths;
 
 const { lang } = Astro.props as { lang: Locale };
+
+/** A few pictures instead of prose, while the running order is unsettled. */
+const asidePhotos = ['venueFromRiver', 'coupleRiver', 'venueSunset'] as const;
 ---
 
 <Base lang={lang} path="/schedule" title={t(lang, 'schedule.title')}>
@@ -23,24 +26,36 @@ const { lang } = Astro.props as { lang: Locale };
 
   <section class="section">
     <div class="container schedule">
-      <Timeline lang={lang} />
+      <div>
+        {/* Stated plainly and before anything else. A guest who reads only the
+            first paragraph should already know not to book a train around
+            these times. */}
+        <aside class="draft-notice">
+          <h2 class="draft-notice__heading">{t(lang, 'schedule.draftHeading')}</h2>
+          <p>{t(lang, 'schedule.draftBody')}</p>
+        </aside>
+
+        <div class="draft-timeline">
+          <p class="draft-timeline__label">{t(lang, 'schedule.draftLabel')}</p>
+          <Timeline lang={lang} />
+        </div>
+      </div>
 
       <aside class="schedule__aside">
-        <div class="card">
-          <h2 class="schedule__asideTitle">{t(lang, 'schedule.quietHourTitle')}</h2>
-          <p class="muted">{t(lang, 'schedule.quietHourBody')}</p>
-        </div>
-
-        <figure class="schedule__figure">
-          <Photo
-            name="venueSunset"
-            lang={lang}
-            widths={[400, 800]}
-            sizes="(min-width: 60rem) 22rem, 100vw"
-            ratio="4/3"
-            class="schedule__image"
-          />
-        </figure>
+        {
+          asidePhotos.map((name, i) => (
+            <figure class="schedule__figure">
+              <Photo
+                name={name}
+                lang={lang}
+                widths={[400, 800]}
+                sizes="(min-width: 60rem) 22rem, 100vw"
+                ratio={i === 1 ? '4/5' : '4/3'}
+                class="schedule__image"
+              />
+            </figure>
+          ))
+        }
       </aside>
     </div>
   </section>
@@ -60,15 +75,49 @@ const { lang } = Astro.props as { lang: Locale };
     }
   }
 
+  .draft-notice {
+    padding: var(--sp-5);
+    border: 2px solid var(--c-lilac-400);
+    border-radius: var(--radius-lg);
+    background: var(--c-lilac-50);
+    margin-block-end: var(--sp-6);
+  }
+
+  .draft-notice__heading {
+    font-size: var(--step-1);
+    margin-block-end: var(--sp-3);
+  }
+
+  /* Marked as a draft with a dashed frame and a label rather than by fading the
+     text. Lowering the opacity would have been the obvious way to say
+     "provisional", but it also lowers contrast — and this page has to stay
+     readable for guests in bright sun and guests with reading glasses. The
+     frame carries the meaning; the words keep their contrast. */
+  .draft-timeline {
+    position: relative;
+    padding: var(--sp-6) var(--sp-4) var(--sp-4);
+    border: 2px dashed var(--c-lilac-300);
+    border-radius: var(--radius-lg);
+  }
+
+  .draft-timeline__label {
+    position: absolute;
+    inset-block-start: -0.75rem;
+    inset-inline-start: var(--sp-5);
+    padding: 2px var(--sp-3);
+    border-radius: var(--radius-pill);
+    background: var(--c-lilac-200);
+    color: var(--c-lilac-700);
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
   .schedule__aside {
     display: flex;
     flex-direction: column;
     gap: var(--sp-5);
-  }
-
-  .schedule__asideTitle {
-    font-size: var(--step-1);
-    margin-block-end: var(--sp-3);
   }
 
   .schedule__figure {

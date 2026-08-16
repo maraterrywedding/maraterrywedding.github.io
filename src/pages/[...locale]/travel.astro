@@ -222,18 +222,19 @@ const MODE_ICONS: Record<TravelMode, string> = {
     margin-block-start: var(--sp-1);
   }
 
-  .route__duration {
+  /* :global() — rendered by <LocalizedText>. See the note in that component. */
+  .route :global(.route__duration) {
     margin-block-start: var(--sp-1);
     font-weight: 600;
     color: var(--c-forest-700);
   }
 
-  .route__text {
+  .route :global(.route__text) {
     margin-block-start: var(--sp-3);
     color: var(--c-text-muted);
   }
 
-  .route__body > p:last-child:not(.route__text) {
+  .route__body > p:last-child {
     margin-block-start: var(--sp-3);
   }
 
