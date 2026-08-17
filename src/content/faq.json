@@ -190,5 +190,37 @@
       "de": "Wir wissen, wie teuer es für euch alle ist, dabei zu sein, und das wissen wir sehr zu schätzen. Geschenke erwarten wir deshalb nicht. Wer trotzdem gern etwas schenken möchte, darf das natürlich.",
       "pt": "A gente sabe o quanto custa para vocês estarem lá, e damos muito valor a isso. Por isso, não esperamos presentes. Se ainda assim quiserem dar alguma coisa, claro que podem."
     }
+  },
+  {
+    "id": "maid-of-honour-and-best-man",
+    "order": 210,
+    "category": "basics",
+    "status": "final",
+    "question": {
+      "en": "Who are the maid of honour and best man?",
+      "de": "Wer sind Trauzeugin und Trauzeuge?",
+      "pt": "Quem são a madrinha e o padrinho?"
+    },
+    "answer": {
+      "en": "Johanna Loris is our maid of honour, and Jan Philip Wahle is our best man.",
+      "de": "Johanna Loris ist unsere Trauzeugin und Jan Philip Wahle ist unser Trauzeuge.",
+      "pt": "Johanna Loris é a nossa madrinha e Jan Philip Wahle é o nosso padrinho."
+    }
+  },
+  {
+    "id": "ideas-and-suggestions",
+    "order": 220,
+    "category": "basics",
+    "status": "final",
+    "question": {
+      "en": "Who do I talk to if I have ideas or suggestions for the party?",
+      "de": "An wen wende ich mich mit Ideen oder Vorschlägen für die Feier?",
+      "pt": "Com quem eu falo se tiver ideias ou sugestões para a festa?"
+    },
+    "answer": {
+      "en": "Johanna Loris and Jan Philip Wahle, our maid of honour and best man — they are the ones plotting the surprises. Ask us and we will pass their contact details on.",
+      "de": "An Johanna Loris und Jan Philip Wahle, unsere Trauzeugin und unseren Trauzeugen — sie hecken die Überraschungen aus. Fragt uns, dann geben wir euch ihre Kontaktdaten.",
+      "pt": "Com Johanna Loris e Jan Philip Wahle, a nossa madrinha e o nosso padrinho — são eles que estão tramando as surpresas. Falem com a gente que passamos os contatos deles."
+    }
   }
 ]
