@@ -23,7 +23,7 @@ tests, zero axe violations.**
 | Home | Hero, live countdown, live weather plus 31-year June averages |
 | The day | Full timeline; two vendor-logistics lines hidden from guests |
 | Getting there | Five routes. Emmerthal is on the S5, direct from Hannover Airport |
-| Where to stay | The venue plus four alternatives within 20 km |
+| Where to stay | The venue plus nine alternatives within 20 km, six of them in Hameln |
 | What to wear | Four-rung formality ladder with silhouettes, plus venue-specific advice |
 | Questions | Twelve entries, no-JavaScript accordion, extended with `/addqa` |
 | Photos | Both albums with build-time QR codes |
@@ -59,8 +59,11 @@ None of it blocking.
 - Whether the ceremony is outdoors — answered as weather-dependent for now
 - Party Photos album link
 - WhatsApp number
-- Verify the five alternative hotels: distances are estimates and four have no
-  booking link
+- Verify the three apartments in Grohnde and Emmerthal, which still have no
+  booking link. The six Hameln hotels were checked on 9 September 2026
+- What `distanceKm` measures: the schema says straight-line, the Hameln entries
+  carry a 13 km estimate, and the real figures are about 10 km straight-line and
+  15 km by road
 - Repo visibility (see `PROGRESS.md`)
 - Permission from the Grohnder Fährhaus for their three photos, or replacements
 

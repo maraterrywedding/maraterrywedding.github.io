@@ -133,8 +133,14 @@ None of these block development.
 - [ ] Confirm the invitation code before the invitations go to print. Changing it
       later means reprinting, and anyone holding an old card gets let through
       flagged rather than blocked — recoverable, but messy.
-- [ ] Verify the five alternative hotels: distances are estimates, and four of the
-      five have no booking link yet
+- [ ] Verify the three Grohnde and Emmerthal apartments: they still have no
+      booking link. The six Hameln hotels all have a verified site and phone
+      number as of 9 Sep 2026
+- [ ] Settle what `distanceKm` means. The schema says straight-line, but every
+      Hameln entry carries the original 13 km estimate; straight-line from the
+      venue is about 10 km and the road is about 15 km. The page hedges with
+      "distances are approximate", so nothing is wrong for a guest — but the
+      field should pick one definition
 - [ ] Confirm the venue's exact map coordinates (currently 52.028, 9.415)
 - [ ] Whether a printed invite code should gate the RSVP endpoint — the only real
       spam defence on an anonymous public endpoint

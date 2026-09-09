@@ -82,9 +82,9 @@
     "name": "Historik Hotel Garni Christinenhof",
     "town": "Hameln",
     "distanceKm": 13,
-    "minutesByCar": 18,
-    "url": null,
-    "phone": null,
+    "minutesByCar": 15,
+    "url": "https://christinenhof.de/",
+    "phone": "+49 5151 95080",
     "priceBand": "mid",
     "kind": "hotel",
     "order": 40,
@@ -93,6 +93,96 @@
       "en": "In a 17th-century timbered building in Hameln's old town, with a pool and sauna. Worth considering if you are making a weekend of it — Hameln is a lovely place to wander, though you will need a taxi back after the party.",
       "de": "In einem Fachwerkhaus aus dem 17. Jahrhundert in der Hamelner Altstadt, mit Pool und Sauna. Lohnt sich, wenn ihr ein Wochenende daraus macht — Hameln lädt zum Bummeln ein, allerdings braucht ihr nach der Party ein Taxi zurück.",
       "pt": "Em um casarão de enxaimel do século XVII no centro histórico de Hameln, com piscina e sauna. Vale a pena se vocês forem emendar um fim de semana — Hameln é ótima para passear, mas vão precisar de táxi na volta da festa."
+    }
+  },
+  {
+    "id": "stadt-hameln",
+    "name": "Hotel Stadt Hameln",
+    "town": "Hameln",
+    "distanceKm": 13,
+    "minutesByCar": 15,
+    "url": "https://hotel-stadthameln.de/",
+    "phone": "+49 5151 9010",
+    "priceBand": "higher",
+    "kind": "hotel",
+    "order": 50,
+    "status": "provisional",
+    "note": {
+      "en": "A four-star hotel right on the Weser, the same river that runs past the Fährhaus, with its own restaurant and eighty rooms. Being the biggest in the centre, it is the one most likely to still have space if you book late.",
+      "de": "Ein Vier-Sterne-Hotel direkt an der Weser, demselben Fluss wie am Fährhaus, mit eigenem Restaurant und achtzig Zimmern. Als größtes Haus im Zentrum ist hier am ehesten noch etwas frei, wenn ihr spät bucht.",
+      "pt": "Um hotel quatro estrelas na beira do Weser, o mesmo rio que passa pelo Fährhaus, com restaurante próprio e oitenta quartos. Como é o maior do centro, é o que tem mais chance de ainda ter vaga se vocês reservarem tarde."
+    }
+  },
+  {
+    "id": "parkhotel-hameln",
+    "name": "Parkhotel Hameln",
+    "town": "Hameln",
+    "distanceKm": 13,
+    "minutesByCar": 15,
+    "url": "https://www.parkhotel-hameln.de/",
+    "phone": "+49 5151 7920",
+    "priceBand": "mid",
+    "kind": "hotel",
+    "order": 60,
+    "status": "provisional",
+    "note": {
+      "en": "Breakfast but no restaurant, and a hundred-odd rooms, which makes it the largest in town. There is a sauna and steam bath on the ninth floor with a view over the valley, underground parking nearby, and five minutes' walk to the old town.",
+      "de": "Frühstück, aber kein Restaurant, und mit gut hundert Zimmern das größte Haus der Stadt. Im neunten Stock gibt es Sauna und Dampfbad mit Blick über das Tal, in der Nähe eine Tiefgarage, und in die Altstadt sind es fünf Minuten zu Fuß.",
+      "pt": "Tem café da manhã, mas não tem restaurante, e com mais de cem quartos é o maior da cidade. No nono andar há sauna e banho a vapor com vista para o vale, estacionamento subterrâneo por perto, e cinco minutos a pé até o centro histórico."
+    }
+  },
+  {
+    "id": "zur-krone-hameln",
+    "name": "Hotel zur Krone",
+    "town": "Hameln",
+    "distanceKm": 13,
+    "minutesByCar": 15,
+    "url": "https://www.hotelzurkrone.de/",
+    "phone": "+49 5151 9070",
+    "priceBand": "mid",
+    "kind": "hotel",
+    "order": 70,
+    "status": "provisional",
+    "note": {
+      "en": "A timbered house from 1645 in the middle of the old town, with a restaurant and a summer terrace on the pedestrian street. If you are driving, set the sat-nav to Kopmanshof 3 — the front door itself is in the pedestrian zone, and parking at the hotel costs extra.",
+      "de": "Ein Fachwerkhaus von 1645 mitten in der Altstadt, mit Restaurant und Sommerterrasse in der Fußgängerzone. Wer mit dem Auto kommt, gibt am besten Kopmanshof 3 ins Navi ein — die Haustür liegt in der Fußgängerzone, und der Parkplatz am Hotel kostet extra.",
+      "pt": "Um casarão de enxaimel de 1645 no meio do centro histórico, com restaurante e uma varanda de verão na rua de pedestres. Se vocês forem de carro, coloquem Kopmanshof 3 no GPS — a entrada fica na área de pedestres, e o estacionamento do hotel é cobrado à parte."
+    }
+  },
+  {
+    "id": "an-der-altstadt-hameln",
+    "name": "Hotel An der Altstadt",
+    "town": "Hameln",
+    "distanceKm": 13,
+    "minutesByCar": 15,
+    "url": "https://www.hotel-hameln.de/",
+    "phone": "+49 5151 40240",
+    "priceBand": "mid",
+    "kind": "hotel",
+    "order": 80,
+    "status": "provisional",
+    "note": {
+      "en": "Across the road from the Bürgergarten park and about fifteen minutes on foot from Hameln station, so it is the simplest choice if you are coming by train. Free parking if you are not, and they take dogs for ten euros a night.",
+      "de": "Gegenüber dem Bürgergarten und etwa fünfzehn Minuten zu Fuß vom Hamelner Bahnhof — die einfachste Wahl, wenn ihr mit dem Zug kommt. Sonst gibt es kostenlose Parkplätze, und Hunde sind für zehn Euro pro Nacht willkommen.",
+      "pt": "Em frente ao parque Bürgergarten e a uns quinze minutos a pé da estação de Hameln, então é a escolha mais simples se vocês vierem de trem. Se não, tem estacionamento gratuito, e aceitam cachorros por dez euros por noite."
+    }
+  },
+  {
+    "id": "bellevue-hameln",
+    "name": "Hotel Bellevue",
+    "town": "Hameln",
+    "distanceKm": 13,
+    "minutesByCar": 15,
+    "url": "https://www.hotel-bellevue-hameln.de/",
+    "phone": "+49 5151 7810034",
+    "priceBand": "mid",
+    "kind": "hotel",
+    "order": 90,
+    "status": "provisional",
+    "note": {
+      "en": "Seventeen rooms in an art nouveau villa, with breakfast included, free parking right outside and somewhere to charge an e-bike. About ten minutes' walk from the old town. The smallest and quietest of the Hameln options.",
+      "de": "Siebzehn Zimmer in einer Jugendstilvilla, Frühstück inklusive, kostenlose Parkplätze direkt vor der Tür und eine Lademöglichkeit für E-Bikes. Rund zehn Minuten zu Fuß in die Altstadt. Das kleinste und ruhigste der Hamelner Häuser.",
+      "pt": "Dezessete quartos em uma casa art nouveau, com café da manhã incluído, estacionamento gratuito na porta e ponto de recarga para bicicleta elétrica. Uns dez minutos a pé do centro histórico. É o menor e mais tranquilo dos hotéis de Hameln."
     }
   }
 ]
