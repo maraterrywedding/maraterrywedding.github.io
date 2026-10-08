@@ -166,6 +166,40 @@ test.describe('RSVP wizard', () => {
     await expect(page.locator('[data-panel="success"]')).toBeVisible();
   });
 
+  test('on a slow connection the confirmation waits for the reply, edit link included', async ({ page }) => {
+    await page.goto('/rsvp');
+    await unlock(page);
+
+    // Apps Script can take a second or more to answer. Hold the reply back so
+    // the page has to sit in its "sending" state while we look at it. The
+    // request still reaches the real mock backend — it is only delayed.
+    const endpoint = await page.locator('[data-rsvp]').getAttribute('data-endpoint');
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => (release = resolve));
+    await page.route(`${new URL(endpoint!).origin}/**`, async (route) => {
+      if (route.request().method() === 'POST') await held;
+      await route.continue();
+    });
+
+    await chooseAttendance(page, 'no');
+    await fillContact(page, uniqueEmail('slow'), false);
+    await next(page);
+    await page.locator('input[name="consentPrivacy"]').check();
+    await page.locator('[data-submit]').click();
+
+    // Still waiting: nothing to confirm yet, so no link on screen — and no "#"
+    // stand-in for one.
+    await expect(page.locator('[data-submit]')).toBeDisabled();
+    await expect(page.locator('[data-panel="success"]')).toBeHidden();
+
+    release();
+    const success = page.locator('[data-panel="success"]');
+    await expect(success).toBeVisible();
+    // The panel is revealed only once its link is filled in, so reading it now
+    // cannot race the reply.
+    expect(await success.locator('[data-success-edit]').getAttribute('href')).toMatch(/\/rsvp\/edit\?t=/);
+  });
+
   test('the form opens straight away — no code is printed on the invitations', async ({ page }) => {
     await page.goto('/rsvp');
     await expect(page.locator('[data-panel="form"]')).toBeVisible();
