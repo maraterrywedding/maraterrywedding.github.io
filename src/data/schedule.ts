@@ -34,8 +34,12 @@ export interface ScheduleEntry {
   highlight?: boolean;
 }
 
-/** The whole schedule is still a draft; flip this when the couple confirm it. */
-export const SCHEDULE_IS_PROVISIONAL = true;
+/**
+ * Shows the "may still change" pill on the schedule page. Off now the couple
+ * have confirmed the running order — the page intro says small changes may
+ * still happen.
+ */
+export const SCHEDULE_IS_PROVISIONAL = false;
 
 export const SCHEDULE: ScheduleEntry[] = [
   {
@@ -50,14 +54,9 @@ export const SCHEDULE: ScheduleEntry[] = [
   {
     time: '10:30',
     title: {
-      en: 'Guests arrive',
-      de: 'Ankunft der Gäste',
-      pt: 'Chegada dos convidados',
-    },
-    note: {
-      en: 'Please be seated by 10:50. There will be water out for you — the Sekt comes after the ceremony.',
-      de: 'Bitte nehmt bis 10:50 Uhr Platz. Wasser steht für euch bereit — der Sekt kommt nach der Trauung.',
-      pt: 'Por favor, sentem-se até as 10:50. Vai ter água à disposição — o espumante vem depois da cerimônia.',
+      en: 'Guest reception and seating accommodation',
+      de: 'Empfang und Platzierung der Gäste',
+      pt: 'Recepção dos convidados e acomodação nos lugares',
     },
   },
   {
@@ -70,43 +69,19 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    time: '11:40',
-    title: {
-      en: 'Congratulations, and a group photo of everyone',
-      de: 'Gratulation und Gruppenfoto mit allen',
-      pt: 'Cumprimentos e foto com todo mundo',
-    },
-    note: {
-      en: 'Please stay close by for this one — we would love everybody in the picture.',
-      de: 'Bleibt dafür bitte in der Nähe — wir hätten gern wirklich alle auf dem Bild.',
-      pt: 'Fiquem por perto nesse momento — queremos todo mundo na foto.',
-    },
-  },
-  {
     time: '12:00',
     title: {
       en: 'Sekt reception and finger food',
       de: 'Sektempfang und Fingerfood',
       pt: 'Recepção com espumante e finger food',
     },
-    note: {
-      en: 'The first toast of the day — after the ceremony, not before.',
-      de: 'Der erste Anstoß des Tages — nach der Trauung, nicht davor.',
-      pt: 'O primeiro brinde do dia — depois da cerimônia, não antes.',
-    },
   },
   {
     time: '13:00',
-    until: '15:00',
     title: {
-      en: 'Free time — photos, a walk along the Weser, garden games',
-      de: 'Freie Zeit — Fotos, Spaziergang an der Weser, Gartenspiele',
-      pt: 'Tempo livre — fotos, caminhada à beira do Weser, jogos no jardim',
-    },
-    note: {
-      en: 'Sekt, orange juice and beer are out for whoever would like one.',
-      de: 'Sekt, Orangensaft und Bier stehen bereit, für alle, die mögen.',
-      pt: 'Tem espumante, suco de laranja e cerveja à disposição de quem quiser.',
+      en: 'Free time, photos, possible games, accompanied by Sekt, orange juice and beer',
+      de: 'Freie Zeit, Fotos, eventuell Spiele, dazu Sekt, Orangensaft und Bier',
+      pt: 'Tempo livre, fotos, talvez alguns jogos, com espumante, suco de laranja e cerveja',
     },
   },
   {
@@ -130,31 +105,26 @@ export const SCHEDULE: ScheduleEntry[] = [
     time: '16:00',
     highlight: true,
     title: {
-      en: 'Speeches',
-      de: 'Reden',
-      pt: 'Discursos',
-    },
-    note: {
-      en: 'Best man, then maid of honour, then the two of us.',
-      de: 'Trauzeuge, dann Trauzeugin, dann wir beide.',
-      pt: 'Padrinho, depois madrinha, e então nós dois.',
+      en: 'Speeches: best man, maid of honour, then the two of us',
+      de: 'Reden: Trauzeuge, Trauzeugin, dann wir beide',
+      pt: 'Discursos: padrinho, madrinha e depois nós dois',
     },
   },
   {
     time: '17:00',
     title: {
-      en: 'More free time — drinks, photos and games',
-      de: 'Noch einmal freie Zeit — Getränke, Fotos und Spiele',
-      pt: 'Mais tempo livre — bebidas, fotos e jogos',
+      en: 'Free time with drinks, photos and games',
+      de: 'Freie Zeit mit Getränken, Fotos und Spielen',
+      pt: 'Tempo livre com bebidas, fotos e jogos',
     },
   },
   {
     time: '18:00',
     highlight: true,
     title: {
-      en: 'Dinner, and the party begins',
-      de: 'Abendessen, und die Party beginnt',
-      pt: 'Jantar, e a festa começa',
+      en: 'Dinner and party',
+      de: 'Abendessen und Party',
+      pt: 'Jantar e festa',
     },
   },
   {
@@ -169,7 +139,7 @@ export const SCHEDULE: ScheduleEntry[] = [
   {
     time: '21:00',
     title: {
-      en: 'The party carries on',
+      en: 'Party continues',
       de: 'Die Party geht weiter',
       pt: 'A festa continua',
     },
@@ -186,18 +156,18 @@ export const SCHEDULE: ScheduleEntry[] = [
     time: '00:00',
     nextDay: true,
     title: {
-      en: 'The evening starts winding down',
-      de: 'Der Abend klingt langsam aus',
-      pt: 'A noite começa a se encerrar',
+      en: 'Start of closure',
+      de: 'Beginn des Ausklangs',
+      pt: 'Início do encerramento',
     },
   },
   {
     time: '01:00',
     nextDay: true,
     title: {
-      en: 'The party ends, and goodnight',
-      de: 'Die Party endet — gute Nacht',
-      pt: 'A festa termina, e boa noite',
+      en: 'Party ends and good night :)',
+      de: 'Ende der Party und gute Nacht :)',
+      pt: 'Fim da festa e boa noite :)',
     },
   },
 ];

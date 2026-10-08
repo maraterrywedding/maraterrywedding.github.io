@@ -83,10 +83,7 @@
   "a11y.externalLink": "opens in a new tab",
 
   "schedule.title": "The day",
-  "schedule.intro": "Roughly how the day will run. It is still a draft — we will firm the times up as we get closer, so check back nearer the date.",
-  "schedule.draftHeading": "Still a work in progress",
-  "schedule.draftBody": "What follows is a first sketch, not a plan. Times will move and parts of it may change completely. We will update this page and let you know once it is settled — there is nothing you need to do with it yet.",
-  "schedule.draftLabel": "Draft",
+  "schedule.intro": "How the day will run. Small changes may still happen, and we will keep this page up to date.",
 
   "travel.title": "Getting there",
   "travel.intro": "Grohnde is a small village on the river Weser, about an hour from Hannover. Here is how most people will get to us.",
