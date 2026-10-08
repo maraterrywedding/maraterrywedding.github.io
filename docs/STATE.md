@@ -55,7 +55,10 @@ None of it blocking.
 
 - Ceremony time: 11:00 or 13:00 (`ceremonyTimeConfirmed` in `event.ts` drives the
   "to be confirmed" pill)
-- The rest of the running order. The times are still a draft and the page says so
+- Whether the running order is final. It now follows the couple's own
+  spreadsheet (8 Oct 2026): ceremony 11:00, speeches 16:00, dinner 18:00,
+  first dance 20:00, finish 01:00. `SCHEDULE_IS_PROVISIONAL` is still true,
+  so the page keeps its "may still change" pill until they say otherwise
 - Whether the ceremony is outdoors — answered as weather-dependent for now
 - Party Photos album link
 - WhatsApp number

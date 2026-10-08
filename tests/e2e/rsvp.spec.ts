@@ -41,6 +41,18 @@ async function fillContact(page: Page, email: string, withPhone = true) {
 
 const next = (page: Page) => page.locator('[data-next]').click();
 
+/**
+ * The success panel is on the page from the start, with an empty party code
+ * until the backend answers, and `textContent()` returns that empty string
+ * immediately rather than waiting. An empty code is also rejected by the find
+ * form, so a test that races here can pass without testing anything.
+ */
+async function readPartyCode(page: Page): Promise<string> {
+  const value = page.locator('[data-party-code-value]');
+  await expect(value).toHaveText(/^MT-[A-Z2-9]{6}$/);
+  return (await value.textContent())!;
+}
+
 test.describe('RSVP wizard', () => {
   test('a party of three, one child and one vegan, reaches the success screen', async ({ page }) => {
     const email = uniqueEmail('party');
@@ -127,10 +139,10 @@ test.describe('RSVP wizard', () => {
     await page.locator('input[name="consentPrivacy"]').check();
     await page.locator('[data-submit]').click();
 
-    const editHref = await page
-      .locator('[data-panel="success"] [data-success-edit]')
-      .getAttribute('href');
-    expect(editHref).toBeTruthy();
+    // The link is `#` until the backend answers, and goto('#') lands on the home page.
+    const editLink = page.locator('[data-panel="success"] [data-success-edit]');
+    await expect(editLink).toHaveAttribute('href', /\/rsvp\/edit\?t=/);
+    const editHref = await editLink.getAttribute('href');
 
     await page.goto(editHref!);
 
@@ -178,15 +190,14 @@ test.describe('RSVP wizard', () => {
     await page.locator('input[name="consentPrivacy"]').check();
     await page.locator('[data-submit]').click();
 
-    const code = await page.locator('[data-party-code-value]').textContent();
-    expect(code).toMatch(/^MT-[A-Z2-9]{6}$/);
+    const code = await readPartyCode(page);
 
     // Arrive at the edit page with no link at all, as someone who lost the email.
     await page.goto('/rsvp/edit');
     await expect(page.locator('[data-edit-find]')).toBeVisible();
 
     await page.fill('#findEmail', email);
-    await page.fill('#findCode', code!);
+    await page.fill('#findCode', code);
     await page.locator('[data-find-submit]').click();
 
     // Lands on the real edit page, pre-filled.
@@ -204,11 +215,11 @@ test.describe('RSVP wizard', () => {
     await next(page);
     await page.locator('input[name="consentPrivacy"]').check();
     await page.locator('[data-submit]').click();
-    const code = await page.locator('[data-party-code-value]').textContent();
+    const code = await readPartyCode(page);
 
     await page.goto('/rsvp/edit');
     await page.fill('#findEmail', 'someone-else@example.com');
-    await page.fill('#findCode', code!);
+    await page.fill('#findCode', code);
     await page.locator('[data-find-submit]').click();
 
     await expect(page.locator('[data-find-error]')).not.toBeEmpty();

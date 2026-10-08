@@ -5,7 +5,7 @@ import type { Localized } from '@/i18n/utils';
  *
  * Times are absolute rather than offsets from the ceremony. If the ceremony
  * moves from 11:00 to 13:00 the whole day does NOT simply shift by two hours —
- * dinner will not move to 20:00 — so the times have to be re-decided by hand
+ * dinner will not move to 21:00 — so the times have to be re-decided by hand
  * rather than recomputed. The `provisional` flag below keeps that honest to
  * guests in the meantime.
  *
@@ -19,6 +19,13 @@ export interface ScheduleEntry {
   time: string;
   /** For entries that span a window, e.g. free time. */
   until?: string;
+  /**
+   * The party runs past midnight, so `00:00` comes after `23:00` rather than
+   * fourteen hours before it. Sorting and any arithmetic on `time` has to add
+   * a day for these, which is why the flag exists rather than a `24:00` hack —
+   * `24:00` is not a time any formatter or `<time datetime>` will accept.
+   */
+  nextDay?: boolean;
   title: Localized<string>;
   note?: Localized<string>;
   /** Vendor logistics — hidden from guests. */
@@ -42,7 +49,6 @@ export const SCHEDULE: ScheduleEntry[] = [
   },
   {
     time: '10:30',
-    highlight: true,
     title: {
       en: 'Guests arrive',
       de: 'Ankunft der Gäste',
@@ -77,8 +83,12 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    time: '11:50',
-    title: { en: 'Sekt reception', de: 'Sektempfang', pt: 'Recepção com espumante' },
+    time: '12:00',
+    title: {
+      en: 'Sekt reception and finger food',
+      de: 'Sektempfang und Fingerfood',
+      pt: 'Recepção com espumante e finger food',
+    },
     note: {
       en: 'The first toast of the day — after the ceremony, not before.',
       de: 'Der erste Anstoß des Tages — nach der Trauung, nicht davor.',
@@ -86,16 +96,17 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    time: '12:30',
-    title: { en: 'Lunch and finger food', de: 'Essen und Fingerfood', pt: 'Almoço e finger food' },
-  },
-  {
     time: '13:00',
-    until: '14:00',
+    until: '15:00',
     title: {
       en: 'Free time — photos, a walk along the Weser, garden games',
       de: 'Freie Zeit — Fotos, Spaziergang an der Weser, Gartenspiele',
       pt: 'Tempo livre — fotos, caminhada à beira do Weser, jogos no jardim',
+    },
+    note: {
+      en: 'Sekt, orange juice and beer are out for whoever would like one.',
+      de: 'Sekt, Orangensaft und Bier stehen bereit, für alle, die mögen.',
+      pt: 'Tem espumante, suco de laranja e cerveja à disposição de quem quiser.',
     },
   },
   {
@@ -116,7 +127,8 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    time: '16:15',
+    time: '16:00',
+    highlight: true,
     title: {
       en: 'Speeches',
       de: 'Reden',
@@ -129,37 +141,75 @@ export const SCHEDULE: ScheduleEntry[] = [
     },
   },
   {
-    time: '16:45',
+    time: '17:00',
     title: {
-      en: 'Quiet time',
-      de: 'Ruhezeit',
-      pt: 'Momento de sossego',
-    },
-    note: {
-      en: 'A breather: little ones can nap, everyone can change and catch their breath.',
-      de: 'Eine Pause: Die Kleinen können schlafen, alle können sich umziehen und einmal durchatmen.',
-      pt: 'Uma pausa: as crianças podem dormir, todo mundo pode se trocar e respirar um pouco.',
+      en: 'More free time — drinks, photos and games',
+      de: 'Noch einmal freie Zeit — Getränke, Fotos und Spiele',
+      pt: 'Mais tempo livre — bebidas, fotos e jogos',
     },
   },
   {
-    time: '17:00',
+    time: '18:00',
     highlight: true,
     title: {
-      en: 'Dinner, first dance, and the party',
-      de: 'Abendessen, Eröffnungstanz und Party',
-      pt: 'Jantar, primeira dança e festa',
+      en: 'Dinner, and the party begins',
+      de: 'Abendessen, und die Party beginnt',
+      pt: 'Jantar, e a festa começa',
+    },
+  },
+  {
+    time: '20:00',
+    highlight: true,
+    title: {
+      en: 'First dance',
+      de: 'Eröffnungstanz',
+      pt: 'Primeira dança',
+    },
+  },
+  {
+    time: '21:00',
+    title: {
+      en: 'The party carries on',
+      de: 'Die Party geht weiter',
+      pt: 'A festa continua',
     },
   },
   {
     time: '23:00',
-    until: '23:30',
     title: {
-      en: 'Midnight snack, and goodnight',
-      de: 'Mitternachtssnack und gute Nacht',
-      pt: 'Lanche da madrugada e boa noite',
+      en: 'Midnight snacks',
+      de: 'Mitternachtssnack',
+      pt: 'Lanche da madrugada',
+    },
+  },
+  {
+    time: '00:00',
+    nextDay: true,
+    title: {
+      en: 'The evening starts winding down',
+      de: 'Der Abend klingt langsam aus',
+      pt: 'A noite começa a se encerrar',
+    },
+  },
+  {
+    time: '01:00',
+    nextDay: true,
+    title: {
+      en: 'The party ends, and goodnight',
+      de: 'Die Party endet — gute Nacht',
+      pt: 'A festa termina, e boa noite',
     },
   },
 ];
 
 /** What guests see: everything except the vendor logistics. */
 export const guestSchedule = (): ScheduleEntry[] => SCHEDULE.filter((entry) => !entry.internal);
+
+/**
+ * Minutes from the start of the wedding day, so entries after midnight sort
+ * after the ones before it rather than jumping to the top.
+ */
+export const scheduleMinutes = (entry: ScheduleEntry): number => {
+  const [hours, minutes] = entry.time.split(':').map(Number);
+  return hours! * 60 + minutes! + (entry.nextDay ? 24 * 60 : 0);
+};
