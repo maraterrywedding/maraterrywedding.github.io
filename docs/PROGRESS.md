@@ -118,6 +118,14 @@ which the processed copies do not. Keep that folder backed up elsewhere.
 None of these block development.
 
 - [ ] Ceremony time: 11:00 or 13:00
+- [x] Running order — taken from the couple's spreadsheet on 8 Oct 2026:
+      ceremony 11:00, Sekt and finger food 12:00, free time 13:00–15:00,
+      coffee and cake 15:00, speeches 16:00, more free time 17:00, dinner
+      18:00, first dance 20:00, midnight snacks 23:00, finish 01:00. The
+      quiet hour is gone; the group photo at 11:40 was kept deliberately
+- [ ] Whether to drop the "may still change" pill. The running order is
+      settled but `SCHEDULE_IS_PROVISIONAL` is still true, partly because
+      the ceremony time above is not confirmed
 - [x] Gift policy — answered 14 Aug 2026: no gifts expected, but welcome
 - [x] Dress code — decided 14 Aug 2026: any of the four, no sweatpants or hoodies,
       and nobody but the bride in white. `CHOSEN_CODE` stays `null` on purpose;

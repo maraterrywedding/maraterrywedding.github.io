@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import faq from '@/content/faq.json';
 import hotels from '@/content/hotels.json';
-import { SCHEDULE, guestSchedule } from '@/data/schedule';
+import { SCHEDULE, guestSchedule, scheduleMinutes } from '@/data/schedule';
 import { CHOSEN_CODE, DRESS_CODES, DRESS_TIPS } from '@/data/dresscode';
 import { TRAVEL_ROUTES } from '@/data/travel';
 import { PRIVACY_SECTIONS } from '@/data/privacy';
@@ -124,12 +124,19 @@ describe('schedule', () => {
     }
   });
 
-  it('runs in chronological order', () => {
-    const minutes = SCHEDULE.map((e) => {
-      const [h, m] = e.time.split(':').map(Number);
-      return h! * 60 + m!;
-    });
+  it('runs in chronological order, including the entries past midnight', () => {
+    const minutes = SCHEDULE.map(scheduleMinutes);
     expect(minutes).toEqual([...minutes].sort((a, b) => a - b));
+  });
+
+  it('keeps the after-midnight entries together at the end', () => {
+    const first = SCHEDULE.findIndex((e) => e.nextDay);
+    expect(first, 'the day should run past midnight').toBeGreaterThan(-1);
+    // Once the day has crossed midnight it cannot cross back, so every entry
+    // from the first flagged one onwards must carry the flag too. Without this
+    // a missed `nextDay` would sort an 01:00 item to the top of the day and
+    // still pass the chronological check above.
+    expect(SCHEDULE.slice(first).every((e) => e.nextDay)).toBe(true);
   });
 
   it('ends each window after it starts', () => {
@@ -143,9 +150,14 @@ describe('schedule', () => {
     const guest = guestSchedule();
     expect(guest.every((e) => !e.internal)).toBe(true);
     // The two known internal entries: decorating access and the photo package.
-    expect(SCHEDULE.length - guest.length).toBe(2);
-    expect(guest.some((e) => e.time === '10:00')).toBe(false);
-    expect(guest.some((e) => e.time === '16:00')).toBe(false);
+    const internal = SCHEDULE.filter((e) => e.internal);
+    expect(internal).toHaveLength(2);
+    // Checked by identity rather than by clock time: the speeches share 16:00
+    // with the photographer's window, so "no guest entry at 16:00" would be
+    // false while saying nothing about whether the filter actually works.
+    for (const entry of internal) {
+      expect(guest, `"${entry.title.en}" must stay hidden`).not.toContain(entry);
+    }
   });
 
   it('still shows guests every moment marked as an anchor', () => {

@@ -5,7 +5,7 @@ import type { Localized } from '@/i18n/utils';
  * ladder of four and highlights the couple's choice. Until they pick one,
  * `CHOSEN_CODE` stays null and the page says so plainly while still giving the
  * advice that is true whatever they choose — grass, June evenings by the river,
- * and the 17:00 window to change.
+ * colour, and what the children will be doing.
  */
 
 export type DressLevel = 'smart-casual' | 'cocktail' | 'formal' | 'black-tie';
